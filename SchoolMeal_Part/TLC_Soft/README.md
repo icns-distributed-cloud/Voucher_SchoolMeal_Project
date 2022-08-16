@@ -15,5 +15,5 @@ For access rights of the application to the USB device:
 ## run
 cd in this directory
 
-./flirone
+./flirgtk
 
