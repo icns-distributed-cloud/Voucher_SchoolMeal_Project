@@ -57,8 +57,12 @@ static int FFC =   0; // detect FFC
 static int buf85pointer = 0;
 static unsigned char buf85[BUF85SIZE];
 static unsigned char fb_proc[160*120]; //, fb_proc2[160*120*3];
+static unsigned char fb_proc2[160*120*3]; //, fb_proc2[160*120*3];
 
-
+static short List[20] = {};
+    
+static int WidthLIst[5] = {1, 20, 40, 60, 79};
+static int HeightLIst[4] = {1, 20, 40, 59};
 
 static struct t_data_t *tdata;
 
@@ -253,6 +257,7 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 
 	// fb_proc = malloc(160 * 128); // 8 Bit gray buffer really needs only 160 x 120
 	memset(fb_proc, 128, 160*120);       // sizeof(fb_proc) doesn't work, value depends from LUT
+	memset(fb_proc2, 128, 160*120 * 3);       // sizeof(fb_proc) doesn't work, value depends from LUT
   
 	//fb_proc2 = malloc(160 * 128 * 3); // 8x8x8  Bit RGB buffer 
 
@@ -306,6 +311,7 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 	int frame_owidth2 = 80;
 	int frame_oheight2 = 60;
 	
+	
 	int hw = frame_owidth2 / 2;
     int hh = frame_oheight2 / 2;
 
@@ -317,6 +323,36 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
           pix[hh * frame_owidth2 + hw - 1] +
           pix[hh * frame_owidth2 + hw];
     med /= 4;
+    
+   
+    
+    int num =0;
+    
+    for(int i=0; i < 5; i++)
+    {
+		//int hw_1 = (frame_owidth2/(4)) * (i + 1);
+		int hw_1 = WidthLIst[i];
+		
+		
+		for(int j =0; j < 4; j++)
+		{		
+			
+			//int hh_1 = (frame_oheight2/(3)) * (j + 1);
+			int hh_1 = HeightLIst[j];
+			
+		List[num] = pix[ (hh_1 - 1) * frame_owidth2 + hw_1 - 1] +
+          pix[(hh_1 - 1) * frame_owidth2 + hw_1] +
+          pix[hh_1 * frame_owidth2 + hw_1 - 1] +
+          pix[hh_1 * frame_owidth2 + hw_1];
+          List[num]/=4;
+          
+          //printf("%f / ", raw2temperature(List[num]));
+          num++;
+
+			}
+		}
+		
+		//printf("\n");
 
 
 
@@ -325,9 +361,15 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 	tdata->t_center = raw2temperature(med);
 
 	if (tdata->ir_buffer == NULL) {
-		tdata->ir_buffer = (unsigned char *)malloc(640*480*4);
+		tdata->ir_buffer = (unsigned char *)malloc(frame_width2 * frame_height2 * 3);
 		fprintf(stderr, "nb\n");
 	}
+	
+	int disp=0;
+	assert(tdata->ir_buffer);
+
+ 
+                        
 	for (y = 0; y < 120; ++y) {
 		for (x = 0; x < 160; ++x) {
 			// fb_proc is the gray scale frame buffer
@@ -342,6 +384,33 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 //				0x00; // A, empty
 		}
 	}
+	
+	/*  RGB Test Code, Have Error
+	 * 
+		    for (y = 0; y < frame_height2; ++y)
+            for (x = 0; x < frame_width2; ++x)
+                for (disp = 0; disp < 3; disp++)
+                    tdata->ir_buffer[3 * y * frame_width2 + 3 * x + disp] =
+                        colormap[3 * (y * 256 / frame_height2) + disp];
+	
+	
+	 // build RGB image
+    for (y = 0; y < frame_height2; y++) {
+        for (x = 0; x < frame_width2; x++) {
+            // fb_proc is the gray scale frame buffer
+            v = fb_proc[y * frame_owidth2 + x];
+            if (1)
+                //v = 255 - v;
+
+            for (disp = 0; disp < 3; disp++)
+				tdata->ir_buffer[3 * y * frame_owidth2 + 3 * x + disp] = colormap[3 * v + disp];
+              //  // fb_proc2 is a 24bit RGB buffer
+              //  fb_proc2[3 * y * frame_owidth2 + 3 * x + disp] = colormap[3 * v + disp];
+        }
+    }
+    */
+	
+	
     
 	if (tdata->jpeg_size == 0 && JpgSize > 0) {
 		tdata->jpeg_size=JpgSize;
@@ -702,7 +771,10 @@ int r = 1;
 gpointer cam_thread_main(gpointer user_data)
 {
 	tdata=(struct t_data_t *)user_data;
-	EPloop(NULL);
+	
+	unsigned char colormap[768];
+	
+	EPloop(colormap );
 
 	return NULL;
 }

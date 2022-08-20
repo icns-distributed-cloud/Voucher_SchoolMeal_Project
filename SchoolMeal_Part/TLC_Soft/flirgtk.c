@@ -74,7 +74,7 @@ gboolean viscam=FALSE;
 
 gpointer cam_thread_main(gpointer user_data);
 
-// data structure shared with camera thread
+// data structure shared with camera thread 
 static struct t_data_t tdata;
 
 
