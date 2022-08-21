@@ -1,6 +1,5 @@
 # SchoolMeal_Part
 
-Camera_API - 열화상 데이터 로드/저장 API
 Sample - API 및 테스트용 코드 폴더
-ThermalData - 열화상 데이터 로드/저장 위치 폴더 (모든 데이터는 이 곳에서 저장 및 로드)
-TLC_Soft - 열화상의 데이터 값 추출 및 영상 추출 코드
+TLC - 열화상 기능 구현 폴더
+YOLO - 딥러닝(YOLO) 모델/기능 구현 폴더
