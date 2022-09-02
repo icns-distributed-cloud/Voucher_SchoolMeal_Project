@@ -29,4 +29,5 @@ AllPixelList_40x40 = TLC_API.getInstance().GetAllPixelData(PixelType.FortyByFort
 OnePixel_10x10 = TLC_API.getInstance().GetOnePixelData(0, 0, PixelType.TenByTen) # Get One Pixel(cell) in 10 x 10 Data, First,Second argument value is x,y vertex, Third is PixelType, return 2 Dimensional Array, 
 OnePixel_40x40 =TLC_API.getInstance().GetOnePixelData(0, 0, PixelType.FortyByForty) # Get One Pixel(cell) in 40 x 40 Data, First,Second argument value is x,y vertex, Third is PixelType, return 2 Dimensional Array, 
 
+
 #---------------------- How to Use --------------------------#

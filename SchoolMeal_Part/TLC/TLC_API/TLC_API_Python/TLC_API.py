@@ -1,10 +1,7 @@
-import enum
 import json
 from multiprocessing.sharedctypes import Value
 import os
 from enum import Enum
-import random
-from typing import Dict
 
 #Version 1.02
 
@@ -214,7 +211,7 @@ class TLC_API:
 
 
 
-##### No Use, Test Code ######
+##### Not Use, Test Code ######
 '''
 mTLC_API = TLC_API()
 
