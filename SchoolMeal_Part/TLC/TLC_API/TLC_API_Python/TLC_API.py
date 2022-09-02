@@ -6,7 +6,7 @@ from enum import Enum
 import random
 from typing import Dict
 
-#Version 1.01
+#Version 1.02
 
 
 class PixelType(Enum):
@@ -16,29 +16,37 @@ class PixelType(Enum):
 
 class TLC_API:
 
-    __FilePath = "FLC_Data/"
+    __mFilePath = "FLC_Data/"
 
-    __instance = None
+    __mInstance = None
 
-    PixelData_10x10 = None
-    PixelData_40x40 = None
+    __mPixelData_10x10 = None
+    __mPixelData_40x40 = None
+
+    __mIsInit = False
 
     def __init__(self): # Initialization
-        self.PixelData_10x10 = self.__CreatePixelData(640, 480, 10, 10, 4)
-        self.PixelData_40x40 = self.__CreatePixelData(640, 480, 40, 40, 4)
+        if self.__mIsInit == True:
+            return
 
+        self.__mPixelData_10x10 = self.__CreatePixelData(640, 480, 10, 10, 4)
+        self.__mPixelData_40x40 = self.__CreatePixelData(640, 480, 40, 40, 4)
+        
+        self.__mIsInit = True
 
     @classmethod
     def getInstance(self):
         """Singleton Pattern, Get TLC_API Instance"""
-        if self.__instance is None:
-            self.__instance = super().__new__(self)
-        return self.__instance
+        if self.__mInstance is None:
+            self.__mInstance = super().__new__(self)
+            self.__mInstance.__init__()
+        return self.__mInstance
 
 
     def SetFilePath(self, path:str): 
         """If You want use other FilePath, You can set W/R file path, Default path is "FLC_Data/", First argument value is Change FilePath"""
-        self.__FilePath = path
+        self.__mFilePath = path
+
 
     def __CreatePixelData(self, w:int, h:int, x:int, y:int, vertex:int): # Create Pixel Vertext Position Data
         PixelData = [[[0 for _ in range(vertex)] for _ in range(x)] for _ in range(y)]
@@ -55,11 +63,11 @@ class TLC_API:
 
     def SaveAllJson(self, data:dict, fileName:str):
         """ Save JsonData, Fir argument value is Dictionary, Second value is FileName"""
-        if not os.path.exists(self.__FilePath):
-            os.makedirs(self.__FilePath)
+        if not os.path.exists(self.__mFilePath):
+            os.makedirs(self.__mFilePath)
         
         if(data != None):
-            with open(self.__FilePath + fileName + ".json", 'w') as outfile:
+            with open(self.__mFilePath + fileName + ".json", 'w') as outfile:
 
                 inputData = {}
                 inputData = data
@@ -92,10 +100,10 @@ class TLC_API:
 
     def GetAllJsonData(self, fileName:str): 
         """ Load All data of TLC Data (Temperature Data, Fire Data...), First argument value is FileNam. Return value is Dictionary about TLC Data"""
-        if os.path.isfile(self.__FilePath + fileName + ".json") == False:
+        if os.path.isfile(self.__mFilePath + fileName + ".json") == False:
             return None
 
-        with open(self.__FilePath + fileName + ".json", "r") as json_file:
+        with open(self.__mFilePath + fileName + ".json", "r") as json_file:
             json_data = json.load(json_file)
             if(json_data != None):
                 return json_data
@@ -120,7 +128,7 @@ class TLC_API:
             else:
                 return None
             
-    def GetFireList(self, fileName:str): 
+    def GetAllFireList(self, fileName:str): 
         """Get TCL->Fire about 10x10 List, First argument is FileName. Return value is 2 Dimensional Array"""
         key ="FireList_100"
 
@@ -131,6 +139,30 @@ class TLC_API:
         else:
             if key in datas:
                 return datas[key]
+            else:
+                return None
+
+
+    def GetNowFireIndexList(self, fileName:str):
+        """Get Now Fire Index in X * Y Fire List. return 1 Dimensional Array"""
+
+        key ="FireList_100"
+
+        datas = self.GetAllJsonData(fileName)
+
+        if datas == None:
+            return None
+        else:
+            if key in datas:
+                
+                isFireList = []
+                index = 0
+                for item in datas[key]:
+                    if item == True:
+                        isFireList.append(index)
+                        index += 1
+
+                return isFireList
             else:
                 return None
 
@@ -157,9 +189,9 @@ class TLC_API:
     def GetAllPixelData(self, type:int): 
         """Get All Pixell Data, is X * Y Data, First argumenet value is PixelType. return value is 3 Dimensional Array"""
         if(type == PixelType.TenByTen):
-            return self.PixelData_10x10 
+            return self.__mPixelData_10x10 
         elif(type == PixelType.FortyByForty):
-            return self.PixelData_40x40 
+            return self.__mPixelData_40x40 
         else:
             return None
 
@@ -169,11 +201,11 @@ class TLC_API:
         if(type == PixelType.TenByTen):
             if x >= 10 or y >= 10:
                 return None
-            return self.PixelData_10x10[x][y]
+            return self.__mPixelData_10x10[x][y]
         elif(type == PixelType.FortyByForty):
             if x >= 40 or y >= 40:
                 return None
-            return self.PixelData_40x40[x][y]
+            return self.__mPixelData_40x40[x][y]
         else:
             return None
 
