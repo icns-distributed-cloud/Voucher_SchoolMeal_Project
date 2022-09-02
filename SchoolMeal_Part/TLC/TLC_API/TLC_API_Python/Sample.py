@@ -9,7 +9,7 @@ TLC_API.getInstance().SetFilePath("FLC_Data/") # If You want use other FilePath,
 
 ## Save Json File Data
 mTest_Dic = {'IsFire': True} # You Have Use Dictionary when save Data, It's Test Dictionary
-TLC_API.getInstance().SaveAllJson(mTest_Dic, "DummyData") # Save JsonData, Fir argument value is Dictionary, Second value is FileName
+TLC_API.getInstance().SaveAllJson(mTest_Dic, "ResultData") # Save JsonData, Fir argument value is Dictionary, Second value is FileName
 
 
 ## Get Json File Data
