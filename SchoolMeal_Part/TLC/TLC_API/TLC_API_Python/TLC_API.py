@@ -11,6 +11,7 @@ import random
 class PixelType(Enum):
     TenByTen = 0
     FortyByForty = 1
+    
 
 class TLC_API:
 
@@ -20,7 +21,6 @@ class TLC_API:
     PixelData_40x40 = NONE
 
     def __init__(self):
-        #self.PixelData_10x10 = self.__CreatePixelData(640, 480, 10, 10, 4)
         self.PixelData_10x10 = self.__CreatePixelData(640, 480, 10, 10, 4)
         self.PixelData_40x40 = self.__CreatePixelData(640, 480, 40, 40, 4)
 
