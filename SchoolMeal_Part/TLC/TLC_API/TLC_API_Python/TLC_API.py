@@ -1,7 +1,6 @@
 import enum
 import json
 import os
-from pickle import NONE
 from enum import Enum
 import random
 
@@ -17,19 +16,27 @@ class TLC_API:
 
     __FilePath = "FLC_Data/"
 
-    PixelData_10x10 = NONE
-    PixelData_40x40 = NONE
+    __instance = None
 
-    def __init__(self):
+    PixelData_10x10 = None
+    PixelData_40x40 = None
+
+    def __init__(self): # Initialization
         self.PixelData_10x10 = self.__CreatePixelData(640, 480, 10, 10, 4)
         self.PixelData_40x40 = self.__CreatePixelData(640, 480, 40, 40, 4)
 
-        # [w/x * i, h/y * j], [w/x * (i+1), h/y * j], [w/x * i, h/y * (j+1)], [w/x * (i+1), h/y * (j+1)]
 
-    def SetFilePath(self, path:str):
+    @classmethod
+    def getInstance(self): # Singleton Pattern
+        if self.__instance is None:
+            self.__instance = super().__new__(self)
+        return self.__instance
+
+
+    def SetFilePath(self, path:str): # set W/R file path, Default path is "FLC_Data/", First argument value is Change FilePath
         self.__FilePath = path
 
-    def __CreatePixelData(self, w:int, h:int, x:int, y:int, vertex:int):
+    def __CreatePixelData(self, w:int, h:int, x:int, y:int, vertex:int): # Create Pixel Vertext Position Data
         PixelData = [[[0 for _ in range(vertex)] for _ in range(x)] for _ in range(y)]
 
         for i in range(x):
@@ -42,11 +49,11 @@ class TLC_API:
         return PixelData
 
 
-    def SaveAllJson(self, data, fileName:str):
+    def SaveAllJson(self, data, fileName:str): # Save JsonData, Fir argument value is Dictionary, Second value is FileName
         if not os.path.exists(self.__FilePath):
             os.makedirs(self.__FilePath)
         
-        if(data != NONE):
+        if(data != None):
             with open(self.__FilePath + fileName + ".json", 'w') as outfile:
 
                 inputData = {}
@@ -56,15 +63,15 @@ class TLC_API:
 
 
     # def SaveOneJson(self, data, fileName:str):
-    #     if(data == NONE):
-    #         return NONE
+    #     if(data == None):
+    #         return None
 
     #     if not os.path.exists(self.__FilePath):
     #         os.makedirs(self.__FilePath)
         
     #     datas = self.LoadAllJsonData(fileName)
 
-    #     if datas == NONE:
+    #     if datas == None:
     #         self.SaveAllJson(fileName, data)
     #     else:
     #         try:
@@ -78,16 +85,16 @@ class TLC_API:
     #             self.SaveAllJson(fileName, data)
 
 
-    def LoadAllJsonData(self, fileName:str):
+    def LoadAllJsonData(self, fileName:str): # Load All data of TLC Data (Temperature Data, Fire Data...), First argument value is FileNam. Return value is Dictionary about TLC Data
         if os.path.isfile(self.__FilePath + fileName + ".json") == False:
-            return NONE
+            return None
 
         with open(self.__FilePath + fileName + ".json", "r") as json_file:
             json_data = json.load(json_file)
-            if(json_data != NONE):
+            if(json_data != None):
                 return json_data
 
-    def GetTmperatureList(self, type:int ,fileName:str):
+    def GetTmperatureList(self, type:int ,fileName:str): # Get TCL->TemperatureList about 10x10 List, First argument value is PixelType, Sceond value is FileName. Return value is 2 Dimensional Array
         key =""
         if type == PixelType.TenByTen:
             key = "TemperatureList_100"
@@ -104,9 +111,9 @@ class TLC_API:
             if key in datas:
                 return datas[key]
             else:
-                return NONE
+                return None
             
-    def GetFireList(self, fileName):
+    def GetFireList(self, fileName): # Get TCL->Fire about 10x10 List, First argument is FileName. Return value is 2 Dimensional Array
         key ="FireList_100"
 
         datas = self.LoadAllJsonData(fileName)
@@ -117,7 +124,7 @@ class TLC_API:
             if key in datas:
                 return datas[key]
             else:
-                return NONE
+                return None
 
     # def GetValueOfKey_Data(self, key:str, data):
     #     try:
@@ -125,13 +132,13 @@ class TLC_API:
     #         if key in datas:
     #             return datas[key]
     #         else:
-    #             return NONE
+    #             return None
 
     #     except KeyError:
     #         if key in datas:
     #             return data[key]
     #         else:
-    #             return NONE
+    #             return None
 
 
     # def GetValueOfKey_File(self, key:str, fileName:str):
@@ -139,16 +146,16 @@ class TLC_API:
     #     return self.GetValueOfKey_Data(data, key)
 
 
-    def GetAllPixelData(self, type:int):
+    def GetAllPixelData(self, type:int): # Get All Pixell Data, is X * Y Data, First argumenet value is PixelType. return value is 3 Dimensional Array
         if(type == PixelType.TenByTen):
             return self.PixelData_10x10 
         elif(type == PixelType.FortyByForty):
             return self.PixelData_40x40 
         else:
-            return NONE
+            return None
 
 
-    def GetOnePixelData(self, x:int, y:int, type:int):
+    def GetOnePixelData(self, x:int, y:int, type:int): # Get One Pixel(cell) in X * Y Data, First,Second argument value is x,y vertex, Third is PixelType, return 2 Dimensional Array, 
         if(type == PixelType.TenByTen):
             if x >= 10 or y >= 10:
                 return None
@@ -158,7 +165,7 @@ class TLC_API:
                 return None
             return self.PixelData_40x40[x][y]
         else:
-            return NONE
+            return None
 
 
 
