@@ -157,10 +157,11 @@ class TLC_API:
                 
                 isFireList = []
                 index = 0
-                for item in datas[key]:
-                    if item == True:
-                        isFireList.append(index)
-                        index += 1
+                for i in range(10):
+                    for j in range(10):
+                        if datas[key][i][j] == True:
+                            isFireList.append(index)
+                            index += 1
 
                 return isFireList
             else:
