@@ -1,8 +1,10 @@
 import enum
 import json
+from multiprocessing.sharedctypes import Value
 import os
 from enum import Enum
 import random
+from typing import Dict
 
 #Version 1.01
 
@@ -27,13 +29,15 @@ class TLC_API:
 
 
     @classmethod
-    def getInstance(self): # Singleton Pattern
+    def getInstance(self):
+        """Singleton Pattern, Get TLC_API Instance"""
         if self.__instance is None:
             self.__instance = super().__new__(self)
         return self.__instance
 
 
-    def SetFilePath(self, path:str): # set W/R file path, Default path is "FLC_Data/", First argument value is Change FilePath
+    def SetFilePath(self, path:str): 
+        """set W/R file path, Default path is "FLC_Data/", First argument value is Change FilePath"""
         self.__FilePath = path
 
     def __CreatePixelData(self, w:int, h:int, x:int, y:int, vertex:int): # Create Pixel Vertext Position Data
@@ -49,7 +53,8 @@ class TLC_API:
         return PixelData
 
 
-    def SaveAllJson(self, data, fileName:str): # Save JsonData, Fir argument value is Dictionary, Second value is FileName
+    def SaveAllJson(self, data:dict, fileName:str):
+        """ Save JsonData, Fir argument value is Dictionary, Second value is FileName"""
         if not os.path.exists(self.__FilePath):
             os.makedirs(self.__FilePath)
         
@@ -85,7 +90,8 @@ class TLC_API:
     #             self.SaveAllJson(fileName, data)
 
 
-    def LoadAllJsonData(self, fileName:str): # Load All data of TLC Data (Temperature Data, Fire Data...), First argument value is FileNam. Return value is Dictionary about TLC Data
+    def LoadAllJsonData(self, fileName:str): 
+        """ Load All data of TLC Data (Temperature Data, Fire Data...), First argument value is FileNam. Return value is Dictionary about TLC Data"""
         if os.path.isfile(self.__FilePath + fileName + ".json") == False:
             return None
 
@@ -94,7 +100,8 @@ class TLC_API:
             if(json_data != None):
                 return json_data
 
-    def GetTmperatureList(self, type:int ,fileName:str): # Get TCL->TemperatureList about 10x10 List, First argument value is PixelType, Sceond value is FileName. Return value is 2 Dimensional Array
+    def GetTmperatureList(self, type:int ,fileName:str): 
+        """Get TCL->TemperatureList about 10x10 List, First argument value is PixelType, Sceond value is FileName. Return value is 2 Dimensional Array"""
         key =""
         if type == PixelType.TenByTen:
             key = "TemperatureList_100"
@@ -113,7 +120,8 @@ class TLC_API:
             else:
                 return None
             
-    def GetFireList(self, fileName): # Get TCL->Fire about 10x10 List, First argument is FileName. Return value is 2 Dimensional Array
+    def GetFireList(self, fileName:str): 
+        """Get TCL->Fire about 10x10 List, First argument is FileName. Return value is 2 Dimensional Array"""
         key ="FireList_100"
 
         datas = self.LoadAllJsonData(fileName)
@@ -146,7 +154,8 @@ class TLC_API:
     #     return self.GetValueOfKey_Data(data, key)
 
 
-    def GetAllPixelData(self, type:int): # Get All Pixell Data, is X * Y Data, First argumenet value is PixelType. return value is 3 Dimensional Array
+    def GetAllPixelData(self, type:int): 
+        """Get All Pixell Data, is X * Y Data, First argumenet value is PixelType. return value is 3 Dimensional Array"""
         if(type == PixelType.TenByTen):
             return self.PixelData_10x10 
         elif(type == PixelType.FortyByForty):
@@ -155,7 +164,8 @@ class TLC_API:
             return None
 
 
-    def GetOnePixelData(self, x:int, y:int, type:int): # Get One Pixel(cell) in X * Y Data, First,Second argument value is x,y vertex, Third is PixelType, return 2 Dimensional Array, 
+    def GetOnePixelData(self, x:int, y:int, type:int): 
+        """Get One Pixel(cell) in X * Y Data, First,Second argument value is x,y vertex, Third is PixelType, return 2 Dimensional Array"""
         if(type == PixelType.TenByTen):
             if x >= 10 or y >= 10:
                 return None
