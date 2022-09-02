@@ -21,7 +21,6 @@ TmperatureList_40x40 = TLC_API.getInstance().GetTmperatureList(PixelType.FortyBy
 FireList = TLC_API.getInstance().GetAllFireList("FireResult") # Get TCL->Fire about 10x10 List, First argument is FileName. Return value is 2 Dimensional Array
 NowFireIndexList = TLC_API.getInstance().GetNowFireIndexList("FireResult") # Get Get Now Fire Index in 10x10 Fire List. return 1 Dimensional Array
 
-#print(NowFireIndexList)
 
 ## Get Image Pixel Position Data##
 AllPixelList_10x10 = TLC_API.getInstance().GetAllPixelData(PixelType.TenByTen) # Get All Pixell Data, is 10 x 10 Data, First argumenet value is PixelType. return value is 3 Dimensional Array
