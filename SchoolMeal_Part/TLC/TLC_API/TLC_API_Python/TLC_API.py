@@ -157,8 +157,9 @@ class TLC_API:
                 
                 isFireList = []
                 index = 0
-                for i in range(10):
-                    for j in range(10):
+
+                for i in range(len(datas[key])):
+                    for j in range(len(datas[key][i])):
                         if datas[key][i][j] == True:
                             isFireList.append(index)
                             index += 1
