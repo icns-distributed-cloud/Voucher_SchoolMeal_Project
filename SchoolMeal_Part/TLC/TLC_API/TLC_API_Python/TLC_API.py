@@ -26,8 +26,10 @@ class TLC_API:
 
         # [w/x * i, h/y * j], [w/x * (i+1), h/y * j], [w/x * i, h/y * (j+1)], [w/x * (i+1), h/y * (j+1)]
 
+    def SetFilePath(self, path:str):
+        self.__FilePath = path
 
-    def __CreatePixelData(self, w,h,x,y,vertex):
+    def __CreatePixelData(self, w:int, h:int, x:int, y:int, vertex:int):
         PixelData = [[[0 for _ in range(vertex)] for _ in range(x)] for _ in range(y)]
 
         for i in range(x):
@@ -40,7 +42,7 @@ class TLC_API:
         return PixelData
 
 
-    def SaveAllJson(self, fileName, data):
+    def SaveAllJson(self, data, fileName:str):
         if not os.path.exists(self.__FilePath):
             os.makedirs(self.__FilePath)
         
@@ -48,35 +50,35 @@ class TLC_API:
             with open(self.__FilePath + fileName + ".json", 'w') as outfile:
 
                 inputData = {}
-                inputData['Data'] = []
-                inputData['Data'].append(data)
+                inputData = data
 
                 json.dump(inputData, outfile, indent=4)
 
 
-    def SaveOneJson(self, fileName, data):
-        if(data == NONE):
-            return NONE
+    # def SaveOneJson(self, data, fileName:str):
+    #     if(data == NONE):
+    #         return NONE
 
-        if not os.path.exists(self.__FilePath):
-            os.makedirs(self.__FilePath)
+    #     if not os.path.exists(self.__FilePath):
+    #         os.makedirs(self.__FilePath)
         
-        datas = self.LoadAllJson(fileName)
+    #     datas = self.LoadAllJsonData(fileName)
 
-        if datas == NONE:
-            self.SaveAllJson(fileName, data)
-        else:
-            try:
-                for key, value in data.items():
-                    datas['Data'][0][key] = value
+    #     if datas == NONE:
+    #         self.SaveAllJson(fileName, data)
+    #     else:
+    #         try:
+    #             for key, value in data.items():
+    #                 datas[key] = value
+                
 
-                with open(self.__FilePath + fileName + ".json", 'w') as outfile:
-                    json.dump(datas, outfile, indent=4)
-            except KeyError:
-                self.SaveAllJson(fileName, data)
+    #             with open(self.__FilePath + fileName + ".json", 'w') as outfile:
+    #                 json.dump(datas, outfile, indent=4)
+    #         except KeyError:
+    #             self.SaveAllJson(fileName, data)
 
 
-    def LoadAllJson(self, fileName):
+    def LoadAllJsonData(self, fileName:str):
         if os.path.isfile(self.__FilePath + fileName + ".json") == False:
             return NONE
 
@@ -85,36 +87,68 @@ class TLC_API:
             if(json_data != NONE):
                 return json_data
 
+    def GetTmperatureList(self, type:int ,fileName:str):
+        key =""
+        if type == PixelType.TenByTen:
+            key = "TemperatureList_100"
+        elif type == PixelType.FortyByForty:
+            key = "TemperatureList_1600"
+        else:
+            return None
 
-    def GetValueOfKey_Data(self, data, key):
-        try:
-            datas = data['Data']
+        datas = self.LoadAllJsonData(fileName)
 
-            if key in datas[0]:
-                return datas[0][key]
-            else:
-                return NONE
-
-        except KeyError:
+        if datas == None:
+            return None
+        else:
             if key in datas:
-                return data[key]
+                return datas[key]
+            else:
+                return NONE
+            
+    def GetFireList(self, fileName):
+        key ="FireList_100"
+
+        datas = self.LoadAllJsonData(fileName)
+
+        if datas == None:
+            return None
+        else:
+            if key in datas:
+                return datas[key]
             else:
                 return NONE
 
+    # def GetValueOfKey_Data(self, key:str, data):
+    #     try:
+    #         datas = data
+    #         if key in datas:
+    #             return datas[key]
+    #         else:
+    #             return NONE
 
-    def GetValueOfKey_File(self, fileName, key):
-        data = self.LoadAllJson(fileName)
-        return self.GetValueOfKey_Data(data, key)
+    #     except KeyError:
+    #         if key in datas:
+    #             return data[key]
+    #         else:
+    #             return NONE
 
 
-    def GetAllPixelData(self, type):
+    # def GetValueOfKey_File(self, key:str, fileName:str):
+    #     data = self.LoadAllJsonData(fileName)
+    #     return self.GetValueOfKey_Data(data, key)
+
+
+    def GetAllPixelData(self, type:int):
         if(type == PixelType.TenByTen):
             return self.PixelData_10x10 
         elif(type == PixelType.FortyByForty):
             return self.PixelData_40x40 
+        else:
+            return NONE
 
 
-    def GetOnePixelData(self, x, y, type):
+    def GetOnePixelData(self, x:int, y:int, type:int):
         if(type == PixelType.TenByTen):
             if x >= 10 or y >= 10:
                 return None
@@ -123,21 +157,16 @@ class TLC_API:
             if x >= 40 or y >= 40:
                 return None
             return self.PixelData_40x40[x][y]
+        else:
+            return NONE
 
 
 
-#---------------------- How to Use --------------------------#    
-   
-mTLC_API = TLC_API()
-#print(mTLC_API.PixelData_10x10)
 
-print(mTLC_API.GetOnePixelData(7,7, PixelType.TenByTen))
-
-#---------------------- How to Use --------------------------#
-
-
-
+##### No Use, Test Code ######
 '''
+mTLC_API = TLC_API()
+
 datas = [[0 for col in range(10)] for row in range(10)]
 for i in range(10):
     for j in range(10):
@@ -150,27 +179,29 @@ for i in range(40):
     for j in range(40):
         datasT[i][j] = random.randrange(10, 50)
 
-datasFire = [0 for col in range(10)]
+datasFire =  [[0 for col in range(10)] for row in range(10)]
 
 for i in range(10):
-    if random.randrange(1, 7) == 5:
-        datasFire[i] = True
-    else:
-        datasFire[i] = False
+    for j in range(10):
+        if random.randrange(1, 7) == 5:
+            datasFire[i][j] = True
+        else:
+            datasFire[i][j] = False
 
 dic = {}
 dic["TemperatureList_100"] = datas
 dic["TemperatureList_1600"] = datasT
 dic["FireList_100"] = datasFire
 
-mTLC_API.SaveAllJson("test",dic)
+mTLC_API.SaveAllJson(dic,"DummyData")
 '''
 
 #print(GetOnePixelData(0))
+#test_Tcl = TLC_API()
 
-#dic = {'abcvs':'kadis'}
-#WriteJson("test", dic)
-#WriteJson_All("test",dic)
+#dic = {'abcvs':50}
+#test_Tcl.WriteJson("test", dic)
+#test_Tcl.SaveAllJson(dic,"test")
 #dd = GetJson("test")
 #print(dd)
 #print(GetKey_Data(dd,"name"))
