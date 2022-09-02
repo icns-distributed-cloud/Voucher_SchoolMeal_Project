@@ -74,7 +74,7 @@ class TLC_API:
     #     if not os.path.exists(self.__FilePath):
     #         os.makedirs(self.__FilePath)
         
-    #     datas = self.LoadAllJsonData(fileName)
+    #     datas = self.GetAllJsonData(fileName)
 
     #     if datas == None:
     #         self.SaveAllJson(fileName, data)
@@ -90,7 +90,7 @@ class TLC_API:
     #             self.SaveAllJson(fileName, data)
 
 
-    def LoadAllJsonData(self, fileName:str): 
+    def GetAllJsonData(self, fileName:str): 
         """ Load All data of TLC Data (Temperature Data, Fire Data...), First argument value is FileNam. Return value is Dictionary about TLC Data"""
         if os.path.isfile(self.__FilePath + fileName + ".json") == False:
             return None
@@ -110,7 +110,7 @@ class TLC_API:
         else:
             return None
 
-        datas = self.LoadAllJsonData(fileName)
+        datas = self.GetAllJsonData(fileName)
 
         if datas == None:
             return None
@@ -124,7 +124,7 @@ class TLC_API:
         """Get TCL->Fire about 10x10 List, First argument is FileName. Return value is 2 Dimensional Array"""
         key ="FireList_100"
 
-        datas = self.LoadAllJsonData(fileName)
+        datas = self.GetAllJsonData(fileName)
 
         if datas == None:
             return None
@@ -150,7 +150,7 @@ class TLC_API:
 
 
     # def GetValueOfKey_File(self, key:str, fileName:str):
-    #     data = self.LoadAllJsonData(fileName)
+    #     data = self.GetAllJsonData(fileName)
     #     return self.GetValueOfKey_Data(data, key)
 
 
