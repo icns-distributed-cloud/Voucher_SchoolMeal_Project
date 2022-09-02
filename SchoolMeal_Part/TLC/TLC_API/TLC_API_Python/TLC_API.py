@@ -37,7 +37,7 @@ class TLC_API:
 
 
     def SetFilePath(self, path:str): 
-        """set W/R file path, Default path is "FLC_Data/", First argument value is Change FilePath"""
+        """If You want use other FilePath, You can set W/R file path, Default path is "FLC_Data/", First argument value is Change FilePath"""
         self.__FilePath = path
 
     def __CreatePixelData(self, w:int, h:int, x:int, y:int, vertex:int): # Create Pixel Vertext Position Data

@@ -8,7 +8,7 @@ TLC_API.getInstance().SaveAllJson(mTest_Dic, "DummyData") # Save JsonData, Fir a
 
 
 ## Load&Get Json File Data
-TLC_API.getInstance().SetFilePath("FLC_Data/") # You can set W/R file path, Default path is "FLC_Data/", First argument value is Change FilePath
+TLC_API.getInstance().SetFilePath("FLC_Data/") # If You want use other FilePath, You can set W/R file path, Default path is "FLC_Data/", First argument value is Change FilePath
 TLC_API.getInstance().LoadAllJsonData("DummyData") # Load All data of TLC Data (Temperature Data, Fire Data...), First argument value is FileNam. Return value is Dictionary about TLC Data
 
 TLC_API.getInstance().GetTmperatureList(PixelType.TenByTen, "DummyData") # Get TCL->TemperatureList about 10x10 List, First argument value is PixelType, Sceond value is FileName. Return value is 2 Dimensional Array
