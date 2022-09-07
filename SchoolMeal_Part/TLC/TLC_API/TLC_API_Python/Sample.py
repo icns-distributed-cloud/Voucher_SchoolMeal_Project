@@ -23,11 +23,11 @@ NowFireIndexList = TLC_API.getInstance().GetNowFireIndexList("FireResult") # Get
 
 
 ## Get Image Pixel Position Data##
-AllPixelList_10x10 = TLC_API.getInstance().GetAllPixelData(PixelType.TenByTen) # Get All Pixell Data, is 10 x 10 Data, First argumenet value is PixelType. return value is 3 Dimensional Array
-AllPixelList_40x40 = TLC_API.getInstance().GetAllPixelData(PixelType.FortyByForty) # Get All Pixell Data, is 40 x 40 Data, First argumenet value is PixelType. return value is 3 Dimensional Array
+AllPixelList_10x10 = TLC_API.getInstance().GetAllCellData(PixelType.TenByTen) # Get All Pixell Data, is 10 x 10 Data, First argumenet value is PixelType. return value is 3 Dimensional Array
+AllPixelList_40x40 = TLC_API.getInstance().GetAllCellData(PixelType.FortyByForty) # Get All Pixell Data, is 40 x 40 Data, First argumenet value is PixelType. return value is 3 Dimensional Array
 
-OnePixel_10x10 = TLC_API.getInstance().GetOnePixelData(0, 0, PixelType.TenByTen) # Get One Pixel(cell) in 10 x 10 Data, First,Second argument value is x,y vertex, Third is PixelType, return 2 Dimensional Array, 
-OnePixel_40x40 =TLC_API.getInstance().GetOnePixelData(0, 0, PixelType.FortyByForty) # Get One Pixel(cell) in 40 x 40 Data, First,Second argument value is x,y vertex, Third is PixelType, return 2 Dimensional Array, 
+OnePixel_10x10 = TLC_API.getInstance().GetOneCellData(0, 0, PixelType.TenByTen) # Get One Pixel(cell) in 10 x 10 Data, First,Second argument value is x,y vertex, Third is PixelType, return 2 Dimensional Array, 
+OnePixel_40x40 =TLC_API.getInstance().GetOneCellData(0, 0, PixelType.FortyByForty) # Get One Pixel(cell) in 40 x 40 Data, First,Second argument value is x,y vertex, Third is PixelType, return 2 Dimensional Array, 
 
 
 #---------------------- How to Use --------------------------#

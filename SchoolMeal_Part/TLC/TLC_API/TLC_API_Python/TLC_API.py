@@ -3,7 +3,7 @@ from multiprocessing.sharedctypes import Value
 import os
 from enum import Enum
 
-#Version 1.02
+#Version 1.03
 
 
 class PixelType(Enum):
@@ -185,7 +185,7 @@ class TLC_API:
     #     return self.GetValueOfKey_Data(data, key)
 
 
-    def GetAllPixelData(self, type:int): 
+    def GetAllCellData(self, type:int): 
         """Get All Pixell Data, is X * Y Data, First argumenet value is PixelType. return value is 3 Dimensional Array"""
         if(type == PixelType.TenByTen):
             return self.__mPixelData_10x10 
@@ -195,7 +195,7 @@ class TLC_API:
             return None
 
 
-    def GetOnePixelData(self, x:int, y:int, type:int): 
+    def GetOneCellData(self, x:int, y:int, type:int): 
         """Get One Pixel(cell) in X * Y Data, First,Second argument value is x,y vertex, Third is PixelType, return 2 Dimensional Array"""
         if(type == PixelType.TenByTen):
             if x >= 10 or y >= 10:
