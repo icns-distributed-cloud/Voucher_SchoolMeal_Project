@@ -11,6 +11,7 @@ class PixelType(Enum):
     FortyByForty = 1
     
 
+
 class TLC_API:
 
     __mFilePath = "FLC_Data/"
@@ -108,9 +109,9 @@ class TLC_API:
     def GetTmperatureList(self, type:int ,fileName:str): 
         """Get TCL->TemperatureList about 10x10 List, First argument value is PixelType, Sceond value is FileName. Return value is 2 Dimensional Array"""
         key =""
-        if type == PixelType.TenByTen:
+        if type == PixelType.TenByTen.value:
             key = "TemperatureList_100"
-        elif type == PixelType.FortyByForty:
+        elif type == PixelType.FortyByForty.value:
             key = "TemperatureList_1600"
         else:
             return None
@@ -140,8 +141,8 @@ class TLC_API:
                 return None
 
 
-    def GetNowFireIndexList(self, fileName:str):
-        """Get Now Fire Index in X * Y Fire List. return 1 Dimensional Array"""
+    def GetNowFireCellList(self, fileName:str):
+        """Get Now Fire Cell in X * Y All Fire List. return 2 Dimensional Array"""
 
         key ="FireList_100"
 
@@ -151,14 +152,16 @@ class TLC_API:
             return None
         else:
             if key in datas:
-                
+
                 isFireList = []
+
+               # isFireList = []
                 index = 0
 
                 for i in range(len(datas[key])):
                     for j in range(len(datas[key][i])):
                         if datas[key][i][j] == True:
-                            isFireList.append(index)
+                            isFireList.append([i, j])
                             index += 1
 
                 return isFireList
@@ -187,9 +190,9 @@ class TLC_API:
 
     def GetAllCellData(self, type:int): 
         """Get All Pixell Data, is X * Y Data, First argumenet value is PixelType. return value is 3 Dimensional Array"""
-        if(type == PixelType.TenByTen):
+        if(type == PixelType.TenByTen.value):
             return self.__mPixelData_10x10 
-        elif(type == PixelType.FortyByForty):
+        elif(type == PixelType.FortyByForty.value):
             return self.__mPixelData_40x40 
         else:
             return None
@@ -197,11 +200,11 @@ class TLC_API:
 
     def GetOneCellData(self, x:int, y:int, type:int): 
         """Get One Pixel(cell) in X * Y Data, First,Second argument value is x,y vertex, Third is PixelType, return 2 Dimensional Array"""
-        if(type == PixelType.TenByTen):
+        if(type == PixelType.TenByTen.value):
             if x >= 10 or y >= 10:
                 return None
             return self.__mPixelData_10x10[x][y]
-        elif(type == PixelType.FortyByForty):
+        elif(type == PixelType.FortyByForty.value):
             if x >= 40 or y >= 40:
                 return None
             return self.__mPixelData_40x40[x][y]
