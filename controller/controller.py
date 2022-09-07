@@ -1,20 +1,40 @@
 import json
 import os
-while(True):
 
-    # 5초 + 스레드 
+# 5초 + 스레드 
 
-    path, dirs, files = next(os.walk("C:/Users/nosul/cont"))
-    file_list = os.listdir("./")
+'''
+import time
+# main
+if __name__ == "__main__":
+    while True:
+        with futures.ThreadPoolExecutor() as executor: # Thread를 호출하고 executor 라고 부름
+            results = executor.submit(read_detect, weights, source) # 함수이름 (read_detect) # 함수에게 전달할 인자 (weights, source)
+        mPerson_Dic = {'person': True}
 
-    print(path)
-    print(dirs)
-    print(files)
+        # Thread의 return value을 출력
+        print(results.result())
+        TLC_API.getInstance().SaveAllJson(mPerson_Dic, "ResultDataPerson") 
+        break # test 무한루프 탈출용
+print('main exits')
+'''
+def controller(): 
 
-    path = file_list
-    print(path)
+    #path, dirs, files = next(os.walk("D:/controller/merge_model_04"))
+    file_list = os.listdir("merge_model_04/") # 현재위치 기준
+
+    #path = file_list
+
+    open_list = [open("merge_model_04/" + json_path, 'r') for json_path in file_list]
+    data_list = [json.load(json_open) for json_open in open_list]
+    [json_open.close() for json_open in open_list]
 
 
+    data_dict = {list(data.keys())[0]:list(data.values())[0] for data in data_list}
+    print(data_dict)
+
+
+    '''
     with open('ResultDataFire.json', 'r', encoding='UTF8') as file:
         Fire = json.load(file)
         print(Fire) # 1 불이 있다.
@@ -30,7 +50,15 @@ while(True):
     with open('ResultDataMouse.json', 'r', encoding='UTF8') as file:
         Mouse = json.load(file)
         print(Mouse) # 4 쥐가 있다.
+    '''
 
+    for num, key in enumerate(["IsFire", "IsObject", "IsPerson", "IsMouse"]): # enumerate 순서와 데이터를 함께 가져옴
+        if data_dict[key]: 
+            return (num + 1)
+        
+    return 0
+    
+    '''
     IsFire,IsObject,IsPerson,IsMouse = 0, 0, 0, 0
 
     if (Fire["IsFire"] == True ) :
@@ -44,8 +72,5 @@ while(True):
 
     # 어느것도 미해당시 0
     print(IsFire,IsObject,IsPerson,IsMouse)
+    '''
 
-    #스마트 플러그 와 동시에 켜주세요
-    #경광등
-    #로보젝트
-    #소리
