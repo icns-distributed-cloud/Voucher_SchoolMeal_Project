@@ -1,6 +1,6 @@
 import json
 import os
-
+import serial
 # 5초 + 스레드 
 
 '''
@@ -21,11 +21,11 @@ print('main exits')
 def controller(): 
 
     #path, dirs, files = next(os.walk("D:/controller/merge_model_04"))
-    file_list = os.listdir("merge_model_04/") # 현재위치 기준
+    file_list = os.listdir("C:/dev/SchoolMeal/controller/merge_model_04/") # 현재위치 기준
 
     #path = file_list
 
-    open_list = [open("merge_model_04/" + json_path, 'r') for json_path in file_list]
+    open_list = [open("C:/dev/SchoolMeal/controller/merge_model_04/" + json_path, 'r') for json_path in file_list]
     data_list = [json.load(json_open) for json_open in open_list]
     [json_open.close() for json_open in open_list]
 
@@ -73,4 +73,14 @@ def controller():
     # 어느것도 미해당시 0
     print(IsFire,IsObject,IsPerson,IsMouse)
     '''
-controller()
+function_result = controller()
+
+ser = serial.Serial(port="COM3", baudrate=115200, timeout = 1) # COM3:port number , 115200: time
+while True:
+    print("insert op :", end=' ')
+    op = input()
+    ser.write(op.encode())
+    print("R: ", ser.readline())
+
+    if op is 'q':
+        ser.close()
