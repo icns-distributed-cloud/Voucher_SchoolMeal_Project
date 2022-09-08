@@ -73,4 +73,4 @@ def controller():
     # 어느것도 미해당시 0
     print(IsFire,IsObject,IsPerson,IsMouse)
     '''
-
+controller()
