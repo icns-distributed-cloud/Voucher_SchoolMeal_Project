@@ -43,6 +43,7 @@ void update_fb(void);
 #include "planck.h"
 
 
+
 // -----------------START-ORG-CODE------------------------------------------
 
 #define VENDOR_ID 0x09cb
@@ -57,12 +58,10 @@ static int FFC =   0; // detect FFC
 static int buf85pointer = 0;
 static unsigned char buf85[BUF85SIZE];
 static unsigned char fb_proc[160*120]; //, fb_proc2[160*120*3];
-static unsigned char fb_proc2[160*120*3]; //, fb_proc2[160*120*3];
+static unsigned char fb_proc2[160*120*3]; //, fb_proc2[160*120*3];  
 
-static short List[20] = {};
-    
-static int WidthLIst[5] = {1, 20, 40, 60, 79};
-static int HeightLIst[4] = {1, 20, 40, 59};
+static int PixelPosition_10[10][10][4][2] = {};
+static int PixelPosition_40[40][40][4][2] = {};
 
 static struct t_data_t *tdata;
 
@@ -328,23 +327,30 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
     
     int num =0;
     
-    for(int i=0; i < 5; i++)
+    for(int i=0; i < 10; i++)
     {
 		//int hw_1 = (frame_owidth2/(4)) * (i + 1);
-		int hw_1 = WidthLIst[i];
 		
 		
-		for(int j =0; j < 4; j++)
+		for(int j =0; j < 10; j++)
 		{		
 			
 			//int hh_1 = (frame_oheight2/(3)) * (j + 1);
-			int hh_1 = HeightLIst[j];
 			
-		List[num] = pix[ (hh_1 - 1) * frame_owidth2 + hw_1 - 1] +
+		 short data = /*pix[ (hh_1 - 1) * frame_owidth2 + hw_1 - 1] +
           pix[(hh_1 - 1) * frame_owidth2 + hw_1] +
           pix[hh_1 * frame_owidth2 + hw_1 - 1] +
-          pix[hh_1 * frame_owidth2 + hw_1];
-          List[num]/=4;
+          pix[hh_1 * frame_owidth2 + hw_1];*/
+          pix[PixelPosition_10[i][j][0][0] + PixelPosition_10[i][j][0][1] * 80] +
+          pix[PixelPosition_10[i][j][1][0] + PixelPosition_10[i][j][0][1] * 80] +
+          pix[PixelPosition_10[i][j][2][0] + PixelPosition_10[i][j][0][1] * 80] +
+          pix[PixelPosition_10[i][j][3][0] + PixelPosition_10[i][j][0][1] * 80];
+          
+          data/=4;
+          
+          tdata->TLC_10x10[i][j] = raw2temperature(data);
+          
+         // printf("%f\n",tdata->TLC_10x10[i][j] );
           
           //printf("%f / ", raw2temperature(List[num]));
           num++;
@@ -352,13 +358,35 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 			}
 		}
 		
-		//printf("\n");
+		
+		 for(int i=0; i < 40; i++)
+		{
+		
+		
+		for(int j =0; j < 40; j++)
+		{		
+			
+		 short data = pix[PixelPosition_40[i][j][0][0] + PixelPosition_40[i][j][0][1] * 80] +
+          pix[PixelPosition_40[i][j][1][0] + PixelPosition_40[i][j][0][1] * 80] +
+          pix[PixelPosition_40[i][j][2][0] + PixelPosition_40[i][j][0][1] * 80] +
+          pix[PixelPosition_40[i][j][3][0] + PixelPosition_40[i][j][0][1] * 80];
+          data/=4;
+          
+          tdata->TLC_40x40[i][j] = raw2temperature(data);
+          
+
+			}
+		}
+		
+		
 
 
 
 	tdata->t_min = raw2temperature(min);
 	tdata->t_max = raw2temperature(max);
 	tdata->t_center = raw2temperature(med);
+	
+	//printf("%f",raw2temperature(med));
 
 	if (tdata->ir_buffer == NULL) {
 		tdata->ir_buffer = (unsigned char *)malloc(frame_width2 * frame_height2 * 3);
@@ -433,6 +461,63 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 	//free(fb_proc2);                   // visible jpg
 }
 
+void CReatePixelData(int w, int h, int x, int y, int type)
+{
+	if(type == 0)
+	{
+		for(int i=0; i< x; i++)
+		{
+			for(int j=0; j < y; j++)
+			{
+				PixelPosition_10[i][j][0][0] = w/x * i;
+				PixelPosition_10[i][j][0][1] = h/y * j;
+				
+				PixelPosition_10[i][j][1][0] = w/x * (i+1);
+				PixelPosition_10[i][j][1][1] = h/y * j;
+				
+				PixelPosition_10[i][j][2][0] = w/x * i;
+				PixelPosition_10[i][j][2][1] = h/y * (j+1);
+				
+				PixelPosition_10[i][j][3][0] = w/x * (i+1);
+				PixelPosition_10[i][j][4][1] = h/y * (j+1);
+			}
+		}
+	}
+	
+	if(type == 1)
+	{
+		for(int i=0; i< x; i++)
+		{
+			for(int j=0; j < y; j++)
+			{
+				PixelPosition_40[i][j][0][0] = w/x * i;
+				PixelPosition_40[i][j][0][1] = h/y * j;
+				
+				
+				PixelPosition_40[i][j][1][0] = w/x * (i+1);
+				PixelPosition_40[i][j][1][1] = h/y * j;
+				
+				PixelPosition_40[i][j][2][0] = w/x * i;
+				PixelPosition_40[i][j][2][1] = h/y * (j+1);
+				
+				PixelPosition_40[i][j][3][0] = w/x * (i+1);
+				PixelPosition_40[i][j][4][1] = h/y * (j+1);
+			}
+		}
+	}
+}
+
+
+void init()
+{
+	
+	CReatePixelData(80,60,10,10,0);
+	CReatePixelData(80,60,40,40,1);
+	
+	
+	
+	}
+
 static int
 find_lvr_flirusb(void)
 {
@@ -486,6 +571,9 @@ int i;
 int
 EPloop(unsigned char *colormap)
 {    
+	
+	
+	init();
 int r = 1;
 
 	r = libusb_init(NULL);
@@ -547,6 +635,9 @@ int r = 1;
 	while (tdata->flir_run) {
 		switch(state) {
 		         case 1:
+		         
+		         
+		         
 				/* Flir config
 				01 0b 01 00 01 00 00 00 c4 d5
 				0 bmRequestType = 01
@@ -770,6 +861,9 @@ int r = 1;
 
 gpointer cam_thread_main(gpointer user_data)
 {
+	
+	
+	
 	tdata=(struct t_data_t *)user_data;
 	
 	unsigned char colormap[768];

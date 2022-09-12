@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
+ 
+// Version 1.01
 
 #include <gtk/gtk.h>
 
@@ -40,6 +41,21 @@
 #include "palettes/Iron_Black.h"
 #include "palettes/Rainbow.h"
 
+
+
+#include <unistd.h>
+#include <time.h>
+#include <signal.h>
+#include <stdio.h>
+
+ 
+
+#include <stdlib.h>
+#include <fcntl.h>
+
+#include <jpeglib.h>
+
+#include "cJSON.h"   
 
 // UI variables
 static GtkWidget *window = NULL;
@@ -147,6 +163,40 @@ char tdisp[16];
 	return ps;
 }
 
+
+void timer()
+{
+	static cairo_surface_t *ps=NULL;
+	cairo_t *cr;
+	if (ps==NULL)
+		ps=cairo_image_surface_create(CAIRO_FORMAT_RGB24, 640, 20);
+	cr=cairo_create(ps);
+	
+	cairo_surface_t *jpeg_surface;
+	
+	if (TRUE) {
+				//take_vis_shot=FALSE;
+				store_vis_shot(tdata.jpeg_buffer, tdata.jpeg_size);
+			}
+			if (TRUE) {
+				jpeg_surface=cairo_image_surface_create_from_jpeg_mem(tdata.jpeg_buffer, tdata.jpeg_size);
+				cairo_save(cr);
+				cairo_scale (cr, vis_surface_scaling, vis_surface_scaling);
+				cairo_set_source_surface (cr, jpeg_surface, vis_x_offset, vis_y_offset);
+				if (ircam)
+					cairo_paint_with_alpha (cr, vis_surface_alpha);
+				else
+					cairo_paint (cr);
+				cairo_restore(cr);
+				cairo_surface_destroy (jpeg_surface);
+			}
+			tdata.jpeg_size=0;
+			tdata.jpeg_buffer=NULL;
+}
+
+
+
+
 void
 store_vis_shot(unsigned char *jpg_buffer, unsigned int jpg_size)
 {
@@ -159,7 +209,8 @@ int fd;
 
 	now = time(NULL);
 	loctime = localtime (&now);
-	strftime (fname, 30, "viscam-%y%m%d%H%M%S", loctime);
+	//strftime (fname, 30, "viscam-%y%m%d%H%M%S", loctime);
+	strftime (fname, 30, "Image", loctime);
 
 	tmp=g_get_user_special_dir(G_USER_DIRECTORY_PICTURES);
 	if (tmp == NULL)
@@ -174,6 +225,8 @@ int fd;
 		write (fd, jpg_buffer, jpg_size);
 		close(fd);
 	}
+	
+	FileWrite();
 }
 
 
@@ -324,6 +377,8 @@ cairo_t *cr;
 }
 
 
+
+
 void
 update_fb(void)
 {
@@ -344,6 +399,8 @@ struct tm *loctime;
 char pname[PATH_MAX];
 char fname[30];
 const char *tmp;
+
+
 
 	now = time(NULL);
 	loctime = localtime (&now);
@@ -831,6 +888,133 @@ GtkWidget *widget;
 	gtk_window_present (GTK_WINDOW(widget));
 }
 
+
+
+
+int createTimer(timer_t* timerID, int sec, int msec)
+{
+    struct sigevent         te;
+    struct itimerspec       its;
+    struct sigaction        sa;
+    int                     sigNo = SIGRTMIN;
+
+    /* Set up signal handler. */
+    sa.sa_flags = SA_SIGINFO;
+    sa.sa_sigaction = timer;     // Å¸ÀÌ¸Ó È£Ãâ½Ã È£ÃâÇÒ ÇÔ¼ö 
+    sigemptyset(&sa.sa_mask);
+
+    if (sigaction(sigNo, &sa, NULL) == -1)
+    {
+        printf("sigaction error\n");
+        return -1;
+    }
+
+    /* Set and enable alarm */
+    te.sigev_notify = SIGEV_SIGNAL;
+    te.sigev_signo = sigNo;
+    te.sigev_value.sival_ptr = timerID;
+    timer_create(CLOCK_REALTIME, &te, timerID);
+
+    its.it_interval.tv_sec = sec;
+    its.it_interval.tv_nsec = msec * 1000000;
+    its.it_value.tv_sec = sec;
+
+    its.it_value.tv_nsec = msec * 1000000;
+    timer_settime(*timerID, 0, &its, NULL);
+
+    return 0;
+}
+
+
+
+ 
+void FileWrite()
+{
+    // JSON 문서에 저장할 데이터
+    
+    double imdbRating = 8.8;
+
+    FILE* fp = fopen("example.json", "w");    // 쓰기 모드로 파일 열기
+
+    // JSON 문법에 맞춰서 fprintf 함수로 값 출력
+    fprintf(fp, "{\n");
+
+    fprintf(fp, "    \"TemperatureList_100\": [\n");
+
+    int Length = 10;
+
+    for (int i = 0; i < Length; i++)
+    {
+        fprintf(fp, "        [ \n");
+
+        for (int j = 0; j < Length; j++)
+        {
+            if (j != (Length - 1))
+            {
+                fprintf(fp, "            \%f\, \n", tdata.TLC_10x10[i][j]);
+            }
+            else
+            {
+                fprintf(fp, "            \%f\ \n", tdata.TLC_10x10[i][j]);
+            }
+        }
+
+        if (i == (Length - 1))
+        {
+            fprintf(fp, "        ] \n");
+        }
+        else
+        {
+            fprintf(fp, "        ], \n");
+        }
+    }
+    fprintf(fp, "    ],\n");
+
+
+
+
+
+    fprintf(fp, "    \"TemperatureList_1600\": [\n");
+
+    Length = 40;
+
+    for (int i = 0; i < Length; i++)
+    {
+        fprintf(fp, "        [ \n");
+
+        for (int j = 0; j < Length; j++)
+        {
+            if (j != (Length - 1))
+            {
+                fprintf(fp, "            \%f\, \n", tdata.TLC_40x40[i][j]);
+            }
+            else
+            {
+                fprintf(fp, "            \%f\ \n", tdata.TLC_40x40[i][j]);
+            }
+        }
+
+        if (i == (Length - 1))
+        {
+            fprintf(fp, "        ] \n");
+        }
+        else
+        {
+            fprintf(fp, "        ], \n");
+        }
+    }
+    fprintf(fp, "    ]\n");
+
+
+
+
+    fprintf(fp, "}\n");
+
+    fclose(fp);    // 파일 닫기
+}
+ 
+ 
+
 int
 main (int argc, char **argv)
 {
@@ -842,12 +1026,34 @@ main (int argc, char **argv)
 	tdata.t_max=0.0;
 	tdata.t_center=0.0;
 	tdata.flir_run=FALSE;
+	
 
-	gapp=gtk_application_new("org.gnome.flirgtk", G_APPLICATION_FLAGS_NONE);
+/*	gapp=gtk_application_new("org.gnome.flirgtk", G_APPLICATION_FLAGS_NONE);
 	g_signal_connect(gapp, "activate", G_CALLBACK (flirgtk_app_activate), NULL);
 	g_application_run (G_APPLICATION (gapp), argc, argv);
-    g_object_unref (gapp);
+    g_object_unref (gapp);*/
+   
+   
+   
+  tdata.color_palette = palette_Rainbow;
+      tdata.flir_run = TRUE;
+      
+		memset(&tdata.shutter_state, 0, sizeof(tdata.shutter_state));
+		memset(&tdata.battery_state, 0, sizeof(tdata.battery_state));
+		if (tdata.ir_buffer == NULL)
+			g_printerr("ir_buffer\n");
+		g_thread_new ("CAM thread", cam_thread_main, &tdata);
+		
+
+ 
+   timer_t timerID;
+
+    createTimer(&timerID, 5, 0);
+ 
+        while (1);
+    
 
 return 0;
 }
+
 

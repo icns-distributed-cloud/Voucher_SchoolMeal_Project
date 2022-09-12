@@ -43,6 +43,7 @@ void update_fb(void);
 #include "planck.h"
 
 
+
 // -----------------START-ORG-CODE------------------------------------------
 
 #define VENDOR_ID 0x09cb
@@ -57,8 +58,21 @@ static int FFC =   0; // detect FFC
 static int buf85pointer = 0;
 static unsigned char buf85[BUF85SIZE];
 static unsigned char fb_proc[160*120]; //, fb_proc2[160*120*3];
+static unsigned char fb_proc2[160*120*3]; //, fb_proc2[160*120*3];
 
+static short List[100] = {};
+  static short List_1600[1600] = {};
+    
+//static int WidthLIst[5] = {1, 20, 40, 60, 79}; // 80
+//static int HeightLIst[4] = {1, 20, 40, 59};    // 60
+static int WidthLIst[10] = {}; // 80
+static int HeightLIst[10] = {};    // 60
 
+static int WidthLIst_40[40] = {}; // 80
+static int HeightLIst_40[40] = {};    // 60
+
+static int PixelPosition_10[10][10][4][2] = {};
+static int PixelPosition_40[40][40][4][2] = {};
 
 static struct t_data_t *tdata;
 
@@ -253,6 +267,7 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 
 	// fb_proc = malloc(160 * 128); // 8 Bit gray buffer really needs only 160 x 120
 	memset(fb_proc, 128, 160*120);       // sizeof(fb_proc) doesn't work, value depends from LUT
+	memset(fb_proc2, 128, 160*120 * 3);       // sizeof(fb_proc) doesn't work, value depends from LUT
   
 	//fb_proc2 = malloc(160 * 128 * 3); // 8x8x8  Bit RGB buffer 
 
@@ -306,6 +321,7 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 	int frame_owidth2 = 80;
 	int frame_oheight2 = 60;
 	
+	
 	int hw = frame_owidth2 / 2;
     int hh = frame_oheight2 / 2;
 
@@ -317,17 +333,86 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
           pix[hh * frame_owidth2 + hw - 1] +
           pix[hh * frame_owidth2 + hw];
     med /= 4;
+    
+   
+    
+    int num =0;
+    
+    for(int i=0; i < 10; i++)
+    {
+		//int hw_1 = (frame_owidth2/(4)) * (i + 1);
+		int hw_1 = WidthLIst[i];
+		
+		
+		for(int j =0; j < 10; j++)
+		{		
+			
+			//int hh_1 = (frame_oheight2/(3)) * (j + 1);
+			int hh_1 = HeightLIst[j];
+			
+		 short data = pix[ (hh_1 - 1) * frame_owidth2 + hw_1 - 1] +
+          pix[(hh_1 - 1) * frame_owidth2 + hw_1] +
+          pix[hh_1 * frame_owidth2 + hw_1 - 1] +
+          pix[hh_1 * frame_owidth2 + hw_1];
+          data/=4;
+          
+          tdata->TLC_10x10[i][j] = raw2temperature(data);
+          
+          //printf("%f / ", raw2temperature(List[num]));
+          num++;
+
+			}
+		}
+		
+		
+		num =0;
+		 for(int i=0; i < 40; i++)
+    {
+		//int hw_1 = (frame_owidth2/(4)) * (i + 1);
+		int hw_1 = WidthLIst_40[i];
+		
+		
+		for(int j =0; j < 40; j++)
+		{		
+			
+			//int hh_1 = (frame_oheight2/(3)) * (j + 1);
+			int hh_1 = HeightLIst_40[j];
+			
+		 short data = pix[ (hh_1 - 1) * frame_owidth2 + hw_1 - 1] +
+          pix[(hh_1 - 1) * frame_owidth2 + hw_1] +
+          pix[hh_1 * frame_owidth2 + hw_1 - 1] +
+          pix[hh_1 * frame_owidth2 + hw_1];
+          data/=4;
+          
+          tdata->TLC_40x40[i][j] = raw2temperature(data);
+          
+          //printf("%f / ", raw2temperature(List[num]));
+          num++;
+
+			}
+		}
+		
+		
+		//printf("\n");
 
 
 
 	tdata->t_min = raw2temperature(min);
 	tdata->t_max = raw2temperature(max);
 	tdata->t_center = raw2temperature(med);
+	
+	//printf("%f",raw2temperature(med));
 
 	if (tdata->ir_buffer == NULL) {
-		tdata->ir_buffer = (unsigned char *)malloc(640*480*4);
+		tdata->ir_buffer = (unsigned char *)malloc(frame_width2 * frame_height2 * 3);
 		fprintf(stderr, "nb\n");
 	}
+	
+	int disp=0;
+	assert(tdata->ir_buffer);
+
+ 
+                        
 	for (y = 0; y < 120; ++y) {
 		for (x = 0; x < 160; ++x) {
 			// fb_proc is the gray scale frame buffer
@@ -342,6 +427,33 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 //				0x00; // A, empty
 		}
 	}
+	
+	/*  RGB Test Code, Have Error
+	 * 
+		    for (y = 0; y < frame_height2; ++y)
+            for (x = 0; x < frame_width2; ++x)
+                for (disp = 0; disp < 3; disp++)
+                    tdata->ir_buffer[3 * y * frame_width2 + 3 * x + disp] =
+                        colormap[3 * (y * 256 / frame_height2) + disp];
+	
+	
+	 // build RGB image
+    for (y = 0; y < frame_height2; y++) {
+        for (x = 0; x < frame_width2; x++) {
+            // fb_proc is the gray scale frame buffer
+            v = fb_proc[y * frame_owidth2 + x];
+            if (1)
+                //v = 255 - v;
+
+            for (disp = 0; disp < 3; disp++)
+				tdata->ir_buffer[3 * y * frame_owidth2 + 3 * x + disp] = colormap[3 * v + disp];
+              //  // fb_proc2 is a 24bit RGB buffer
+              //  fb_proc2[3 * y * frame_owidth2 + 3 * x + disp] = colormap[3 * v + disp];
+        }
+    }
+    */
+	
+	
     
 	if (tdata->jpeg_size == 0 && JpgSize > 0) {
 		tdata->jpeg_size=JpgSize;
@@ -363,6 +475,98 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 	//free(fb_proc);                    // thermal RAW
 	//free(fb_proc2);                   // visible jpg
 }
+
+void CReatePixelData(int w, int h, int x, int y, int type)
+{
+	if(type == 0)
+	{
+		for(int i=0; i< x; i++)
+		{
+			for(int j=0; j < y; j++)
+			{
+				PixelPosition_10[i][j][0][0] = w/x * i;
+				PixelPosition_10[i][j][0][1] = h/y * j;
+				
+				PixelPosition_10[i][j][1][0] = w/x * (i+1);
+				PixelPosition_10[i][j][1][1] = h/y * j;
+				
+				PixelPosition_10[i][j][2][0] = w/x * i;
+				PixelPosition_10[i][j][2][1] = h/y * (j+1);
+				
+				PixelPosition_10[i][j][3][0] = w/x * (i+1);
+				PixelPosition_10[i][j][4][1] = h/y * (j+1);
+			}
+		}
+	}
+	
+	if(type == 1)
+	{
+		for(int i=0; i< x; i++)
+		{
+			for(int j=0; j < y; j++)
+			{
+				PixelPosition_40[i][j][0][0] = w/x * i;
+				PixelPosition_40[i][j][0][1] = h/y * j;
+				
+				
+				PixelPosition_40[i][j][1][0] = w/x * (i+1);
+				PixelPosition_40[i][j][1][1] = h/y * j;
+				
+				PixelPosition_40[i][j][2][0] = w/x * i;
+				PixelPosition_40[i][j][2][1] = h/y * (j+1);
+				
+				PixelPosition_40[i][j][3][0] = w/x * (i+1);
+				PixelPosition_40[i][j][4][1] = h/y * (j+1);
+			}
+		}
+	}
+}
+
+
+void init()
+{
+	
+	CReatePixelData(80,60,10,10,0);
+	CReatePixelData(80,60,40,40,1);
+	
+	/*
+	
+	for(int i=0; i<10; i++)
+	{
+		WidthLIst[i] = 80 / i;
+	}
+	
+	return;
+	for(int i=0; i<10; i++)
+	{
+		HeightLIst[i] = 60 / i;
+	}
+	
+	
+	
+	WidthLIst[0] += 1;
+	WidthLIst[9] -= 1;
+	
+	HeightLIst[0] += 1;
+	HeightLIst[9] -= 1;
+	
+	
+	for(int i=0; i<40; i++)
+	{
+		WidthLIst_40[i] = 80 / i;
+	}
+	for(int i=0; i<40; i++)
+	{
+		HeightLIst_40[i] = 60 / i;
+	}
+	
+	WidthLIst_40[0] += 1;
+	WidthLIst_40[39] -= 1;
+	
+	HeightLIst_40[0] += 1;
+	HeightLIst_40[39] -= 1;*/
+	
+	}
 
 static int
 find_lvr_flirusb(void)
@@ -417,6 +621,9 @@ int i;
 int
 EPloop(unsigned char *colormap)
 {    
+	
+	
+	init();
 int r = 1;
 
 	r = libusb_init(NULL);
@@ -478,6 +685,9 @@ int r = 1;
 	while (tdata->flir_run) {
 		switch(state) {
 		         case 1:
+		         
+		         
+		         
 				/* Flir config
 				01 0b 01 00 01 00 00 00 c4 d5
 				0 bmRequestType = 01
@@ -701,8 +911,14 @@ int r = 1;
 
 gpointer cam_thread_main(gpointer user_data)
 {
+	
+	
+	
 	tdata=(struct t_data_t *)user_data;
-	EPloop(NULL);
+	
+	unsigned char colormap[768];
+	
+	EPloop(colormap );
 
 	return NULL;
 }
