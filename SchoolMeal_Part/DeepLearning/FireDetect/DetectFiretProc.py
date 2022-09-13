@@ -32,12 +32,12 @@ class DetectFireProc:
 
     def __DetectFire(self):
         print("Start Detect Fire")
-        DetectResultBox = DetectFire_Yolov5.run()
+        DetectBoxList = DetectFire_Yolov5.run()
 
-        BoxOverLabList = []
+        BoxOverlabList = []
 
-        if(len(DetectResultBox) >= 1):
-            for i in DetectResultBox:
+        if(len(DetectBoxList) >= 1):
+            for i in DetectBoxList:
                 for j in range(10):
                     for k in range(10):
                         FireImageBox = []
@@ -54,7 +54,7 @@ class DetectFireProc:
                         DetectFireBox.append(i[3].item())
 
                         if(self.__CheckBoxOverlab(DetectFireBox, FireImageBox) == True):
-                            BoxOverLabList.append([j, k])
+                            BoxOverlabList.append([j, k])
                             #break
         
         JsonResultData = {}
@@ -65,8 +65,8 @@ class DetectFireProc:
                 IsFireList_10x10[i][j] = False
 
 
-        if(len(BoxOverLabList) >= 1):
-            for i in BoxOverLabList:
+        if(len(BoxOverlabList) >= 1):
+            for i in BoxOverlabList:
                 for j in range(10):
                     for k in range(10):
                         if (i[0] == j and i[1] == k):
