@@ -24,13 +24,13 @@ class DetectFireProc:
 
         self.__mLock.acquire()
 
-        self.__DetectFire()
+        self.__Detect()
         threading.Timer(5, self.Run).start()
         
         self.__mLock.release()
         
 
-    def __DetectFire(self):
+    def __Detect(self):
         print("Start Detect Fire")
         DetectBoxList = DetectFire_Yolov5.run()
 
@@ -40,49 +40,46 @@ class DetectFireProc:
             for i in DetectBoxList:
                 for j in range(10):
                     for k in range(10):
-                        FireImageBox = []
-                        FireImageBox.append(TLC_API.getInstance().GetOneCellData(j, k, PixelType.TenByTen.value)[0][Rect.x.value]) # x
-                        FireImageBox.append(TLC_API.getInstance().GetOneCellData(j, k, PixelType.TenByTen.value)[0][Rect.y.value]) # y
-                        FireImageBox.append(64) # w
-                        FireImageBox.append(48) # h
+                        CurrentCellBox = []
+                        CurrentCellBox.append(TLC_API.getInstance().GetOneCellData(j, k, PixelType.TenByTen.value)[0][Rect.x.value]) # x
+                        CurrentCellBox.append(TLC_API.getInstance().GetOneCellData(j, k, PixelType.TenByTen.value)[0][Rect.y.value]) # y
+                        CurrentCellBox.append(64) # w
+                        CurrentCellBox.append(48) # h
 
-                        DetectFireBox = []
+                        CurrentDetectBox = []
+                        CurrentDetectBox.append(i[0].item())
+                        CurrentDetectBox.append(i[1].item())
+                        CurrentDetectBox.append(i[2].item())
+                        CurrentDetectBox.append(i[3].item())
 
-                        DetectFireBox.append(i[0].item())
-                        DetectFireBox.append(i[1].item())
-                        DetectFireBox.append(i[2].item())
-                        DetectFireBox.append(i[3].item())
-
-                        if(self.__CheckBoxOverlab(DetectFireBox, FireImageBox) == True):
+                        if(self.__CheckBoxOverlab(CurrentDetectBox, CurrentCellBox) == True):
                             BoxOverlabList.append([j, k])
-                            #break
+
         
         JsonResultData = {}
-        IsFireList_10x10 =  [[0 for col in range(10)] for row in range(10)]
+        
+        IsDetectList_10x10 =  [[0 for col in range(10)] for row in range(10)]
 
         for i in range(10):
             for j in range(10):
-                IsFireList_10x10[i][j] = False
+                IsDetectList_10x10[i][j] = False
 
 
         if(len(BoxOverlabList) >= 1):
             for i in BoxOverlabList:
                 for j in range(10):
                     for k in range(10):
-                        if (i[0] == j and i[1] == k):
-                            IsFireList_10x10[j][k] = True
-                        #else:
-                            #IsFireList_10x10[j][k] = False
+                        if (i[Rect.x.value] == j and i[Rect.y.value] == k):
+                            IsDetectList_10x10[j][k] = True
 
-        JsonResultData["FireList_100"] = IsFireList_10x10
+        JsonResultData["FireList_100"] = IsDetectList_10x10
 
-
-        print(JsonResultData)
+        #print(JsonResultData)
 
         TLC_API.getInstance().SaveAllJson(JsonResultData, "FireResult")
 
             
-    def __CheckBoxOverlab(self, box1, box2): # 추가
+    def __CheckBoxOverlab(self, box1, box2): # Check is Detect box overlab with 10x10 cell
 
         if(box1[Rect.x.value] > box2[Rect.x.value] + box2[Rect.w.value]):
             return False
@@ -103,6 +100,10 @@ class DetectFireProc:
         return True
 
 
+## ------------------ How to Use -----------------#
+
 #test = DetectFireProc()
 #test.Run()
+
+## ------------------ How to Use -----------------#
 
