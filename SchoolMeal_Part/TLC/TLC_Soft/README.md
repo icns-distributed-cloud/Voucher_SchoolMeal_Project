@@ -32,3 +32,12 @@ For access rights of the application to the USB device:
 
     cp 77-flirone-lusb.rules /lib/udev/rules.d/
     udevadm control --reload-rules
+
+
+## How To Use
+apt install libgtk-3-dev libjpeg-dev libusb-1.0-0-dev libcjson-dev
+
+cp 77-flirone-lusb.rules /lib/udev/rules.d/
+udevadm control --reload-rules
+
+./flirgtk
