@@ -28,6 +28,18 @@ class DetectFireProc:
         threading.Timer(5, self.Run).start()
         
         self.__mLock.release()
+
+
+    def RestartThread(self):
+        if(self.__mStopFlag == False):
+            self.__mStopFlag = True
+
+            threading.Timer(10, self.Run).start()
+
+
+    def StopThread(self):
+        if(self.__mStopFlag == False):
+            self.__mStopFlag = True
         
 
     def __Detect(self):

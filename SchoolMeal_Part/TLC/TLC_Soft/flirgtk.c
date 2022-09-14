@@ -169,7 +169,9 @@ void timer()
 	static cairo_surface_t *ps=NULL;
 	cairo_t *cr;
 	if (ps==NULL)
-		ps=cairo_image_surface_create(CAIRO_FORMAT_RGB24, 640, 20);
+	{
+		ps=cairo_image_surface_create(CAIRO_FORMAT_RGB24, 1440, 20); // 640, befor
+	}
 	cr=cairo_create(ps);
 	
 	cairo_surface_t *jpeg_surface;
@@ -1015,7 +1017,7 @@ void FileWrite()
 int
 main (int argc, char **argv)
 {
-	tdata.ir_buffer = (unsigned char *)malloc(640*480*4);
+	tdata.ir_buffer = (unsigned char *)malloc(1440*1080*4);
 	tdata.raw_ir_buffer = (unsigned short *)malloc(169*120*2);
 	tdata.emissivity=0.9;
 	tdata.tempreflected=20.0;
@@ -1045,7 +1047,7 @@ main (int argc, char **argv)
  
    timer_t timerID;
 
-    createTimer(&timerID, 5, 0);
+    createTimer(&timerID, 0, 300);
  
         while (1);
     
