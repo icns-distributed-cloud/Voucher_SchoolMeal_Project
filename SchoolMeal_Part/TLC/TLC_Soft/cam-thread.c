@@ -238,6 +238,10 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 	uint32_t JpgSize     = buf85[16] + (buf85[17] << 8) + (buf85[18] << 16) + (buf85[19] << 24);
 	uint32_t StatusSize  = buf85[20] + (buf85[21] << 8) + (buf85[22] << 16) + (buf85[23] << 24);
 
+
+	//printf("%d\n", ThermalSize);
+	//printf("%d\n", JpgSize);
+
 	if ( (FrameSize+28) > (buf85pointer) )  {
 		// wait for next chunk
 		return;
@@ -342,9 +346,9 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
           pix[hh_1 * frame_owidth2 + hw_1 - 1] +
           pix[hh_1 * frame_owidth2 + hw_1];*/
           pix[PixelPosition_10[i][j][0][0] + PixelPosition_10[i][j][0][1] * 80] +
-          pix[PixelPosition_10[i][j][1][0] + PixelPosition_10[i][j][0][1] * 80] +
-          pix[PixelPosition_10[i][j][2][0] + PixelPosition_10[i][j][0][1] * 80] +
-          pix[PixelPosition_10[i][j][3][0] + PixelPosition_10[i][j][0][1] * 80];
+          pix[PixelPosition_10[i][j][1][0] + PixelPosition_10[i][j][1][1] * 80] +
+          pix[PixelPosition_10[i][j][2][0] + PixelPosition_10[i][j][2][1] * 80] +
+          pix[PixelPosition_10[i][j][3][0] + PixelPosition_10[i][j][3][1] * 80];
           
           data/=4;
           
@@ -367,9 +371,9 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 		{		
 			
 		 short data = pix[PixelPosition_40[i][j][0][0] + PixelPosition_40[i][j][0][1] * 80] +
-          pix[PixelPosition_40[i][j][1][0] + PixelPosition_40[i][j][0][1] * 80] +
-          pix[PixelPosition_40[i][j][2][0] + PixelPosition_40[i][j][0][1] * 80] +
-          pix[PixelPosition_40[i][j][3][0] + PixelPosition_40[i][j][0][1] * 80];
+          pix[PixelPosition_40[i][j][1][0] + PixelPosition_40[i][j][1][1] * 80] +
+          pix[PixelPosition_40[i][j][2][0] + PixelPosition_40[i][j][2][1] * 80] +
+          pix[PixelPosition_40[i][j][3][0] + PixelPosition_40[i][j][3][1] * 80];
           data/=4;
           
           tdata->TLC_40x40[i][j] = raw2temperature(data);
@@ -479,7 +483,7 @@ void CReatePixelData(int w, int h, int x, int y, int type)
 				PixelPosition_10[i][j][2][1] = h/y * (j+1);
 				
 				PixelPosition_10[i][j][3][0] = w/x * (i+1);
-				PixelPosition_10[i][j][4][1] = h/y * (j+1);
+				PixelPosition_10[i][j][3][1] = h/y * (j+1);
 			}
 		}
 	}
@@ -501,7 +505,7 @@ void CReatePixelData(int w, int h, int x, int y, int type)
 				PixelPosition_40[i][j][2][1] = h/y * (j+1);
 				
 				PixelPosition_40[i][j][3][0] = w/x * (i+1);
-				PixelPosition_40[i][j][4][1] = h/y * (j+1);
+				PixelPosition_40[i][j][3][1] = h/y * (j+1);
 			}
 		}
 	}

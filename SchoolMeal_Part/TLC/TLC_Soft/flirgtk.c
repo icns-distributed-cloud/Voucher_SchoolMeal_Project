@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  
-// Version 1.01
+
 
 #include <gtk/gtk.h>
 
@@ -930,13 +930,10 @@ int createTimer(timer_t* timerID, int sec, int msec)
  
 void FileWrite()
 {
-    // JSON 문서에 저장할 데이터
-    
     double imdbRating = 8.8;
 
-    FILE* fp = fopen("example.json", "w");    // 쓰기 모드로 파일 열기
+    FILE* fp = fopen("TemperatureData.json", "w");
 
-    // JSON 문법에 맞춰서 fprintf 함수로 값 출력
     fprintf(fp, "{\n");
 
     fprintf(fp, "    \"TemperatureList_100\": [\n");
@@ -1010,7 +1007,7 @@ void FileWrite()
 
     fprintf(fp, "}\n");
 
-    fclose(fp);    // 파일 닫기
+    fclose(fp);
 }
  
  
