@@ -70,7 +70,10 @@ class DetectFireProc:
                 for j in range(10):
                     for k in range(10):
                         if (i[Rect.x.value] == j and i[Rect.y.value] == k):
-                            IsDetectList_10x10[j][k] = True
+                            TmperatureList_10x10 = TLC_API.getInstance().GetTmperatureList(PixelType.TenByTen.value, "DummyData")
+                            if (TmperatureList_10x10 is not None):
+                                if (TmperatureList_10x10[j][k] >= 80):
+                                    IsDetectList_10x10[j][k] = True
 
         JsonResultData["FireList_100"] = IsDetectList_10x10
 
