@@ -14,7 +14,7 @@ class DetectYoloProc_Sample:
     def Run(self): # Just Call This Function
 
         self.__mMyThread = threading.Thread(target=self.MyThread) # Change for Your Function
-        self.__mMyThread.daemon = True
+        #self.__mMyThread.daemon = True
         self.__mMyThread.start()
 
     def MyThread(self):
@@ -23,6 +23,7 @@ class DetectYoloProc_Sample:
 
             if(self.__mStopFlag == True):
                 self.__mStopFlag = False
+                self.__mLock.release()
                 return
 
             self.test() # This is Test Function, You Shoud Add your Function, then it will run periodically
