@@ -1,5 +1,6 @@
 import threading
 import DetectFire_Yolov5
+from datetime import datetime
 
 from TLC_API import *
 
@@ -87,7 +88,11 @@ class DetectFireProc:
                                 if (TmperatureList_10x10[j][k] >= 80):
                                     IsDetectList_10x10[j][k] = True
 
+
+        now = datetime.now()
+
         JsonResultData["FireList_100"] = IsDetectList_10x10
+        JsonResultData["CurrentTime"] = now.strftime('%Y-%m-%d %H:%M:%S')
 
         #print(JsonResultData)
 
