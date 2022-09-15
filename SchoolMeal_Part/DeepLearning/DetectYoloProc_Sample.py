@@ -1,5 +1,5 @@
 import threading
-from datetime import datetime
+from time import sleep
 
 class DetectYoloProc_Sample:
 
@@ -7,30 +7,40 @@ class DetectYoloProc_Sample:
 
     __mStopFlag = False
 
+    __mMyThread = None
+
+    __Second = 1 # Default Wait Second is 1 Sec
+
     def Run(self): # Just Call This Function
 
-        if(self.__mStopFlag == True):
-            self.__mStopFlag = False
-            return
+        self.__mMyThread = threading.Thread(target=self.MyThread) # Change for Your Function
 
-        self.__mLock.acquire()
-        
-        #Add Your Function
-        self.Test() # This is Test Function, You Shoud Add your Function, then it will run periodically
+        self.__mMyThread.start()
 
-        threading.Timer(5, self.Run).start() # You Can Change The Thread Time, Now is 5 Second
-        
-        self.__mLock.release()
+    def MyThread(self):
+        while True:
+            self.__mLock.acquire()
+
+            if(self.__mStopFlag == True):
+                self.__mStopFlag = False
+                return
+
+            self.test() # This is Test Function, You Shoud Add your Function, then it will run periodically
+
+            sleep(self.__Second)
+
+            self.__mLock.release()
 
 
-    def Test(self):
-        print("This is Test Function, You Can Input This Function")
+    def test(self):
+        print("This is Test Funcion")
+
 
     def RestartThread(self): # RestartThread Function
         if(self.__mStopFlag == False):
             self.__mStopFlag = True
 
-            threading.Timer(10, self.Run).start()
+            threading.Timer(self.__Second + 2, self.Run).start()
 
 
     def StopThread(self): # StopThread Function
