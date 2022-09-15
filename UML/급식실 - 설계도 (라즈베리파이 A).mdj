@@ -4963,7 +4963,7 @@
 											"font": "Arial;13;0",
 											"left": 48,
 											"top": -48,
-											"width": 73.67724609375,
+											"width": 78.12060546875,
 											"height": 13,
 											"text": "(from Model)"
 										},
@@ -5415,7 +5415,7 @@
 							},
 							"fillColor": "#c9c9c9",
 							"font": "Arial;13;0",
-							"left": 160,
+							"left": 168,
 							"top": 784,
 							"width": 785,
 							"height": 98
@@ -5488,7 +5488,7 @@
 											"font": "Arial;13;0",
 											"left": 48,
 											"top": -32,
-											"width": 73.67724609375,
+											"width": 78.12060546875,
 											"height": 13,
 											"text": "(from Model)"
 										},
