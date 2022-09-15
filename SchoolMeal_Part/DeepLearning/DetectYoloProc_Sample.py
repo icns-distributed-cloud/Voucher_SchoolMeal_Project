@@ -15,8 +15,8 @@ class DetectYoloProc_Sample:
 
         self.__mLock.acquire()
         
-        #Input Your Function
-        self.Test()
+        #Add Your Function
+        self.Test() # This is Test Function, You Shoud Add your Function, then it will run periodically
 
         threading.Timer(5, self.Run).start() # You Can Change The Thread Time, Now is 5 Second
         
