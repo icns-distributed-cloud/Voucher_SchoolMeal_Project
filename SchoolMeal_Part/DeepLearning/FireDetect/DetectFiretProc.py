@@ -1,6 +1,8 @@
 import threading
 import DetectFire_Yolov5
 from datetime import datetime
+from time import sleep
+from enum import Enum
 
 from TLC_API import *
 
@@ -17,28 +19,40 @@ class DetectFireProc:
 
     __mStopFlag = False
 
-    def Run(self):
+    __mMyThread = None
 
-        if(self.__mStopFlag == True):
-            self.__mStopFlag = False
-            return
+    __Second = 5 # Default Wait Second is 1 Sec
 
-        self.__mLock.acquire()
+    def Run(self): # Just Call This Function
 
-        self.__Detect()
-        threading.Timer(5, self.Run).start()
-        
-        self.__mLock.release()
+        self.__mMyThread = threading.Thread(target=self.__MyThread)
+        #self.__mMyThread.daemon = True
+        self.__mMyThread.start()
+
+    def __MyThread(self):
+        while True:
+            self.__mLock.acquire()
+
+            if(self.__mStopFlag == True):
+                self.__mStopFlag = False
+                self.__mLock.release()
+                return
+
+            DetectFire_Yolov5.run()
+
+            sleep(self.__Second)
+
+            self.__mLock.release()
 
 
-    def RestartThread(self):
+    def RestartThread(self): # RestartThread Function
         if(self.__mStopFlag == False):
             self.__mStopFlag = True
 
-            threading.Timer(10, self.Run).start()
+            threading.Timer(self.__Second + 2, self.Run).start()
 
 
-    def StopThread(self):
+    def StopThread(self): # StopThread Function
         if(self.__mStopFlag == False):
             self.__mStopFlag = True
         

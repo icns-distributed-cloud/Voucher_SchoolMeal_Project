@@ -13,11 +13,11 @@ class DetectYoloProc_Sample:
 
     def Run(self): # Just Call This Function
 
-        self.__mMyThread = threading.Thread(target=self.MyThread) # Change for Your Function
+        self.__mMyThread = threading.Thread(target=self.__MyThread)
         #self.__mMyThread.daemon = True
         self.__mMyThread.start()
 
-    def MyThread(self):
+    def __MyThread(self):
         while True:
             self.__mLock.acquire()
 
@@ -26,14 +26,14 @@ class DetectYoloProc_Sample:
                 self.__mLock.release()
                 return
 
-            self.test() # This is Test Function, You Shoud Add your Function, then it will run periodically
+            self.__test() # This is Test Function, You Shoud Add your Function, then it will run periodically
 
             sleep(self.__Second)
 
             self.__mLock.release()
 
 
-    def test(self):
+    def __test(self):
         print("This is Test Funcion")
 
 
