@@ -14,7 +14,7 @@ class DetectYoloProc_Sample:
     def Run(self): # Just Call This Function
 
         self.__mMyThread = threading.Thread(target=self.MyThread) # Change for Your Function
-
+        self.__mMyThread.daemon = True
         self.__mMyThread.start()
 
     def MyThread(self):
