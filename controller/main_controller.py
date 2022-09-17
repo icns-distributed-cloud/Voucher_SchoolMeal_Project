@@ -1,86 +1,87 @@
 import json
 import os
-import serial
-# 5초 + 스레드 
-
-'''
+import sys
 import time
-# main
-if __name__ == "__main__":
-    while True:
-        with futures.ThreadPoolExecutor() as executor: # Thread를 호출하고 executor 라고 부름
-            results = executor.submit(read_detect, weights, source) # 함수이름 (read_detect) # 함수에게 전달할 인자 (weights, source)
-        mPerson_Dic = {'person': True}
+from TLC_API import *
+from datetime import datetime
+#import TapoP100.PyP100.Control_tapo as tapo
+from DetectFiretProc import *
+from DetectObjectProc import *
 
-        # Thread의 return value을 출력
-        print(results.result())
-        TLC_API.getInstance().SaveAllJson(mPerson_Dic, "ResultDataPerson") 
-        break # test 무한루프 탈출용
-print('main exits')
-'''
+
 def controller(): 
+    
+    file_list = os.listdir("controller/merge_model_04/") # 현재위치 기준
 
-    #path, dirs, files = next(os.walk("D:/controller/merge_model_04"))
-    file_list = os.listdir("C:/dev/SchoolMeal/controller/merge_model_04/") # 현재위치 기준
 
-    #path = file_list
-
-    open_list = [open("C:/dev/SchoolMeal/controller/merge_model_04/" + json_path, 'r') for json_path in file_list]
+    # 만약 파일이 없다면?
+    open_list = [open("controller/merge_model_04/" + json_path, 'r') for json_path in file_list]
+    
     data_list = [json.load(json_open) for json_open in open_list]
+
     [json_open.close() for json_open in open_list]
 
 
     data_dict = {list(data.keys())[0]:list(data.values())[0] for data in data_list}
-    print(data_dict)
+    time_dict = {list(data.keys())[1]:list(data.values())[1] for data in data_list}
+
+    datetime_format = "%Y-%m-%d %H:%M:%S.%f"
+    dic = {"result": 0}
 
 
-    '''
-    with open('ResultDataFire.json', 'r', encoding='UTF8') as file:
-        Fire = json.load(file)
-        print(Fire) # 1 불이 있다.
-
-    with open('ResultDataObject.json', 'r', encoding='UTF8') as file:
-        Object = json.load(file)
-        print(Object) # 2 불주변에 물건이 있다.
-
-    with open('ResultDataPerson.json', 'r', encoding='UTF8') as file:
-        Person = json.load(file)
-        print(Person) # 3 불주변에 사람이 없다.
-
-    with open('ResultDataMouse.json', 'r', encoding='UTF8') as file:
-        Mouse = json.load(file)
-        print(Mouse) # 4 쥐가 있다.
-    '''
-
-    for num, key in enumerate(["IsFire", "IsObject", "IsPerson", "IsMouse"]): # enumerate 순서와 데이터를 함께 가져옴
-        if data_dict[key]: 
-            return (num + 1)
+    for num, key in enumerate(["IsMouse", "IsPerson", "IsObject", "IsFire"]):# enumerate 순서와 데이터를 함께 가져옴
+        if key is 'IsPerson' : # 사람이 없을 때
+            if data_dict[key] is False: 
+                dic = {"lightType": num+1}
+                break
+        else : 
+            if data_dict[key] is True: 
+                dic = {"lightType": num+1}
+                break
+            
+    for num, key in enumerate(["MousePresentTime", "PersonPresentTime", "ObjectPresentTime", "FirePresentTime"]): # enumerate 순서와 데이터를 함께 가져옴
+        datetime_result = datetime.strptime(time_dict[key], datetime_format)
+        timeDifference = datetime.now() - datetime_result
         
+        if int(timeDifference.seconds) > 5 : 
+            print("5초 경과했습니다. 강제 종료 후 해당파일 재실행합니다.")
+            DetectFireProc.StopThread()
+            DetectFireProc.RestartThread()
+            
+        
+    TLC_API.getInstance().SaveAllJson(dic, "LightType") 
+    
     return 0
     
-    '''
-    IsFire,IsObject,IsPerson,IsMouse = 0, 0, 0, 0
+        
+mFirecontrollerTest = DetectFireProc() # 불
+mFirecontrollerTest.Run()
 
-    if (Fire["IsFire"] == True ) :
-        IsFire = 1
-    if (Object["IsObject"] == True) :
-        IsObject = 2
-    if (Person["IsPerson"] == True) :
-        IsPerson = 3
-    if (Mouse["IsMouse"] == True) :
-        IsMouse = 4
+mObjectcontrollerTest = DetectObjectProc() # 물체
+mObjectcontrollerTest.Run()
 
-    # 어느것도 미해당시 0
-    print(IsFire,IsObject,IsPerson,IsMouse)
-    '''
-function_result = controller()
+mPersoncontrollerTest = DetectPersonProc() # 사람
+mPersoncontrollerTest.Run()
 
-ser = serial.Serial(port="COM3", baudrate=115200, timeout = 1) # COM3:port number , 115200: time
-while True:
-    print("insert op :", end=' ')
-    op = input()
-    ser.write(op.encode())
-    print("R: ", ser.readline())
+mMousecontrollerTest = DetectMouseProc() # 쥐
+mMousecontrollerTest.Run()
 
-    if op is 'q':
-        ser.close()
+while(True):
+    function_result = controller()
+    time.sleep(3)
+
+# 스마트 콘센트,로고젝트 켤때, 환풍기,주파수
+# if __name__ == "__main__":
+#     #plug = tapo.Plug("IP1")
+#     plug = tapo.Plug("IP2")
+#     flag = True
+
+#     while True:
+#         if flag:
+#             plug.turn_on()
+#             flag = False
+#         else:
+#             plug.turn_off()
+#             flag = True
+
+#         time.sleep(3)
