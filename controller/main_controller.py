@@ -7,6 +7,8 @@ from datetime import datetime
 #import TapoP100.PyP100.Control_tapo as tapo
 from DetectFiretProc import *
 from DetectObjectProc import *
+from DetectPersonProc import *
+from DetectMouseProc import *
 
 
 def controller(): 
@@ -33,10 +35,24 @@ def controller():
         datetime_result = datetime.strptime(time_dict[key], datetime_format)
         timeDifference = datetime.now() - datetime_result
         
+        # detection 4가지 문제 생겼을 시 재 실행 각각 5초가 지났을때 실행해야함
         if int(timeDifference.seconds) > 5 : 
             print("5초 경과했습니다. 강제 종료 후 해당파일 재실행합니다.")
-            DetectFireProc.StopThread()
-            DetectFireProc.RestartThread()
+            if key is 'MousePresentTime' : 
+                DetectMouseProc.StopThread()
+                DetectMouseProc.RestartThread()
+
+            elif key is 'PersonPresentTime':
+                DetectPersonProc.StopThread()
+                DetectPersonProc.RestartThread()
+
+            elif key is 'ObjectPresentTime':
+                DetectObjectProc.StopThread()
+                DetectObjectProc.RestartThread()
+
+            elif key is 'FirePresentTime':
+                DetectFireProc.StopThread()
+                DetectFireProc.RestartThread()
 
     for num, key in enumerate(["IsMouse", "IsPerson", "IsObject", "IsFire"]):# enumerate 순서와 데이터를 함께 가져옴
         if key is 'IsPerson' : # 사람이 없을 때
