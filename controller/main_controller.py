@@ -29,6 +29,15 @@ def controller():
     dic = {"result": 0}
 
 
+    for num, key in enumerate(["MousePresentTime", "PersonPresentTime", "ObjectPresentTime", "FirePresentTime"]): # enumerate 순서와 데이터를 함께 가져옴
+        datetime_result = datetime.strptime(time_dict[key], datetime_format)
+        timeDifference = datetime.now() - datetime_result
+        
+        if int(timeDifference.seconds) > 5 : 
+            print("5초 경과했습니다. 강제 종료 후 해당파일 재실행합니다.")
+            DetectFireProc.StopThread()
+            DetectFireProc.RestartThread()
+
     for num, key in enumerate(["IsMouse", "IsPerson", "IsObject", "IsFire"]):# enumerate 순서와 데이터를 함께 가져옴
         if key is 'IsPerson' : # 사람이 없을 때
             if data_dict[key] is False: 
@@ -39,16 +48,7 @@ def controller():
                 dic = {"lightType": num+1}
                 break
             
-    for num, key in enumerate(["MousePresentTime", "PersonPresentTime", "ObjectPresentTime", "FirePresentTime"]): # enumerate 순서와 데이터를 함께 가져옴
-        datetime_result = datetime.strptime(time_dict[key], datetime_format)
-        timeDifference = datetime.now() - datetime_result
-        
-        if int(timeDifference.seconds) > 5 : 
-            print("5초 경과했습니다. 강제 종료 후 해당파일 재실행합니다.")
-            DetectFireProc.StopThread()
-            DetectFireProc.RestartThread()
-            
-        
+    
     TLC_API.getInstance().SaveAllJson(dic, "LightType") 
     
     return 0
