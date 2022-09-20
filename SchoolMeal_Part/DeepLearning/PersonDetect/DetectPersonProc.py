@@ -18,6 +18,11 @@ class DetectPersonProc:
     __mMyThread = None
     
     __Second = 5 # Default Wait Second is 1 Sec
+    
+    fire_list = []
+    
+    def __init__(self, NowFireIndexList): # __init__ 초기화
+        self.fire_list = NowFireIndexList
 
 
     def Run(self): # Just Call This Function
@@ -55,41 +60,80 @@ class DetectPersonProc:
         if(self.__mStopFlag == False):
             self.__mStopFlag = True
         
-
+    def Origin_to_ten (coor, W=1440, H=1080): # coor 좌표
+        w = W//10
+        h = H//10
+        return [coor[0]//w, coor[1]//h, coor[2]//w, coor[3]//h] # box를 그릴 때, 왼쪽 위 꼭지점이랑 오른쪽 아래 꼭지점을 찍어 사각형을 그림 # x1 # y1 # x2 # y2  
+        
+    def range_check(x, range_pixel):
+        x += range_pixel
+        x = 0 if x<0 else x
+        x = 9 if x>9 else x
+        return x
+    
     # Detect code
     def __Read_Detect(self): 
-        person_count = DetectPerson_Yolov5.run(weights = weights, source = source)
-        is_fire = False
-        fire_list = TLC_API.getInstance().GetAllFireList("FireResult")   
-
-        for row in range(10): # row(행) 10
-            for column in range(10): # column(열) 10
-                if fire_list[row][column]: # fire_list true (true = if fire exist)
-                    TLC_API.getInstance().GetOnePixelData(row, column, PixelType.TenByTen)
-                    is_fire = True
-                    break
+        is_fire_danger = False
+        
+        # 사람을 Detection해서 사람 좌표 가져옴
+        person_boxes = DetectPerson_Yolov5.run(weights = weights, source = source)
+        
+        # 현재 불이 있는 좌표만 가져옴
+        fire_list = self.fire_list # 수정 필요 (어떻게 쓰는지)  
+        
+        # False로 10*10행렬 생성
+        ten_ten_arr = [[False]*10]*10
+        
+        # 사람 좌표로 10*10행렬에서 사람이 있는 면적을 표시
+        while person_boxes:
+            origin_coor = [val.item() for val in person_boxes.pop()]
+            x1, y1, x2, y2 = origin_to_ten(origin_coor)
+            
+            for i in range(x1, x2+1):
+                for j in range(y1, y2+1):
+                    ten_ten_arr[i][j] = True
                 
+        # 현재 불이 인식되어서 fire_list에 값이 있다면
+        #if fire_list:
+            # fire_list가 빌때까지 불이 있는 좌표에서 1칸씩의 범위로 사람이 있는지 비교
+        while(fire_list and not is_fire_danger):
+            # i(x), j(y)좌표로 뒤에서부터 하나씩 꺼냄
+            x, y = fire_list.pop() # 가장 뒤에 있는 것을 꺼내기 pop
+            startx = range_check(x, 2)
+            endx = range_check(x, -2)
+            starty = range_check(y, 2)
+            endy = range_check(y, -2)
+            
+            for i in range(startx, endx+1):
+                for j in range(starty, endy+1):
+                    if not ten_ten_arr[i][j]:
+                        is_fire_danger=True # fire_list가 없으면 탈출 # 상태가 danger 감지 후 탈출 # True 위험
+                
+
+        # 시간 불러오기
         now = datetime.now()
+        #print(now.strftime('%Y-%m-%d %H:%M:%S.%f'))
         
-        print(now.strftime('%Y-%m-%d %H:%M:%S.%f'))
-            
-        # value handling (fire o person x = True), (remainder value = False) 
-        if is_fire and not person_count:
+        if is_fire_danger: # 불 있고 + 사람 없을 때 = 위험 (경보음 발생)
             print("danger")
-            is_person = True
-        else:
-            print("not danger")
             is_person = False
-            
+        else:
+            print("not danger") # 불 있고 + 사람 있을 때 = 이상 없음
+            is_person = True
         
+        # 저장할 내용 dict로 만들기
         mPerson_Dic = { 
                        "IsPerson": is_person,
                        "PersonPresentTime":now.strftime('%Y-%m-%d %H:%M:%S.%f')
                        }
-        
         # Json으로 저장
         TLC_API.getInstance().SaveAllJson(mPerson_Dic, "03_ResultDataPerson")
 
 
-test = DetectPersonProc()
-test.Run()
+NowFireIndexList = TLC_API.getInstance().GetNowFireCellList("FireResult")
+
+print(NowFireIndexList)
+
+if NowFireIndexList is not None :
+    test = DetectPersonProc(NowFireIndexList)
+    test.Run()
