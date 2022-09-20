@@ -5,7 +5,7 @@ import time
 from TLC_API import *
 from datetime import datetime
 #import TapoP100.PyP100.Control_tapo as tapo
-from DetectFiretProc import *
+#from DetectFiretProc import *
 from DetectObjectProc import *
 from DetectPersonProc import *
 from DetectMouseProc import *
@@ -31,7 +31,7 @@ def controller():
     dic = {"result": 0}
 
 
-    for num, key in enumerate(["MousePresentTime", "PersonPresentTime", "ObjectPresentTime", "FirePresentTime"]): # enumerate 순서와 데이터를 함께 가져옴
+    for num, key in enumerate(["MousePresentTime", "PersonPresentTime", "ObjectPresentTime"]): # enumerate 순서와 데이터를 함께 가져옴
         datetime_result = datetime.strptime(time_dict[key], datetime_format)
         timeDifference = datetime.now() - datetime_result
         
@@ -50,11 +50,7 @@ def controller():
                 DetectObjectProc.StopThread()
                 DetectObjectProc.RestartThread()
 
-            elif key is 'FirePresentTime':
-                DetectFireProc.StopThread()
-                DetectFireProc.RestartThread()
-
-    for num, key in enumerate(["IsMouse", "IsPerson", "IsObject", "IsFire"]):# enumerate 순서와 데이터를 함께 가져옴
+    for num, key in enumerate(["IsMouse", "IsPerson", "IsObject"]):# enumerate 순서와 데이터를 함께 가져옴
         if key is 'IsPerson' : # 사람이 없을 때
             if data_dict[key] is False: 
                 dic = {"lightType": num+1}
@@ -70,9 +66,6 @@ def controller():
     return 0
     
         
-mFirecontrollerTest = DetectFireProc() # 불
-mFirecontrollerTest.Run()
-
 mObjectcontrollerTest = DetectObjectProc() # 물체
 mObjectcontrollerTest.Run()
 
