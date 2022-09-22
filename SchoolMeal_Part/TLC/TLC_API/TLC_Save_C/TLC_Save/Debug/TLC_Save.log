@@ -1,3 +1,0 @@
-﻿  TLC_API.c
-D:\Git\Voucher_SchoolMeal_Project\SchoolMeal_Part\TLC\TLC_API\TLC_Save\TLC_Save\TLC_API.c(57,13): warning C4098: 'FileWrite': 'void' 함수에서 값을 반환하고 있습니다.
-  TLC_Save.vcxproj -> D:\Git\Voucher_SchoolMeal_Project\SchoolMeal_Part\TLC\TLC_API\TLC_Save\Debug\TLC_Save.exe

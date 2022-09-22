@@ -12,9 +12,9 @@ class PixelType(Enum):
     
 
 
-class TLC_API:
+class TIC_API:
 
-    __mFilePath = "FLC_Data/"
+    __mFilePath = "TIC_Data/"
 
     __mInstance = None
 
@@ -34,7 +34,7 @@ class TLC_API:
 
     @classmethod
     def getInstance(self):
-        """Singleton Pattern, Get TLC_API Instance"""
+        """Singleton Pattern, Get TIC_API Instance"""
         if self.__mInstance is None:
             self.__mInstance = super().__new__(self)
             self.__mInstance.__init__()
@@ -97,7 +97,7 @@ class TLC_API:
 
 
     def GetAllJsonData(self, fileName:str): 
-        """ Load All data of TLC Data (Temperature Data, Fire Data...), First argument value is FileNam. Return value is Dictionary about TLC Data"""
+        """ Load All data of TIC Data (Temperature Data, Fire Data...), First argument value is FileNam. Return value is Dictionary about TIC Data"""
         if os.path.isfile(self.__mFilePath + fileName + ".json") == False:
             return None
 
@@ -216,7 +216,7 @@ class TLC_API:
 
 ##### Not Use, Test Code ######
 '''
-mTLC_API = TLC_API()
+mTIC_API = TIC_API()
 
 datas = [[0 for col in range(10)] for row in range(10)]
 for i in range(10):
@@ -244,11 +244,11 @@ dic["TemperatureList_100"] = datas
 dic["TemperatureList_1600"] = datasT
 dic["FireList_100"] = datasFire
 
-mTLC_API.SaveAllJson(dic,"DummyData")
+mTIC_API.SaveAllJson(dic,"DummyData")
 '''
 
 #print(GetOnePixelData(0))
-#test_Tcl = TLC_API()
+#test_Tcl = TIC_API()
 
 #dic = {'abcvs':50}
 #test_Tcl.WriteJson("test", dic)

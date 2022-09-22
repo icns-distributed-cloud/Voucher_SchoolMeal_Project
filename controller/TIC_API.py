@@ -12,7 +12,7 @@ class PixelType(Enum):
     
 
 
-class TLC_API:
+class TIC_API:
 
     __mFilePath = "FLC_Data/"
 

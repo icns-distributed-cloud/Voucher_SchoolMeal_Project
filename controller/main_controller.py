@@ -2,7 +2,7 @@ import json
 import os
 import sys
 import time
-from TLC_API import *
+from TIC_API import *
 from datetime import datetime
 #import TapoP100.PyP100.Control_tapo as tapo
 #from DetectFiretProc import *
@@ -61,7 +61,7 @@ def controller():
                 break
             
     
-    TLC_API.getInstance().SaveAllJson(dic, "LightType") 
+    TIC_API.getInstance().SaveAllJson(dic, "LightType") 
     
     return 0
     
