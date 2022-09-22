@@ -3,7 +3,7 @@ import DetectPerson_Yolov5
 from datetime import datetime
 from time import sleep
 
-from TLC_API import *
+from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 # 테스트용 Weights, Source
 weights = "D:/person_detection/Pascal_yolov5pytorch/yolov5/runs/train/result_hyper3/weights/best.pt" # config를 수정하기
@@ -127,10 +127,10 @@ class DetectPersonProc:
                        "PersonPresentTime":now.strftime('%Y-%m-%d %H:%M:%S.%f')
                        }
         # Json으로 저장
-        TLC_API.getInstance().SaveAllJson(mPerson_Dic, "03_ResultDataPerson")
+        TIC_API.getInstance().SaveAllJson(mPerson_Dic, "03_ResultDataPerson")
 
 
-NowFireIndexList = TLC_API.getInstance().GetNowFireCellList("FireResult")
+NowFireIndexList = TIC_API.getInstance().GetNowFireCellList("FireResult")
 
 print(NowFireIndexList)
 

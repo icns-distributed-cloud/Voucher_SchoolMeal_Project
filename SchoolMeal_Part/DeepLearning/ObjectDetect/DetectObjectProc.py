@@ -6,7 +6,7 @@ from time import sleep
 weights = "C:/Users/nosul/ObjectDetection/yolov5/best.pt" #  config를 수정하기
 source = "C:/Users/nosul/ObjectDetection/yolov5/test_image.jpg" # 테스트할 이미지
 
-from TLC_API import *
+from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 class DetectObjectProc:
 
@@ -79,8 +79,8 @@ class DetectObjectProc:
                     for k in range(10):
                         list_ = []
                         # 픽셀 위치
-                        list_.append(TLC_API.getInstance().GetOneCellData(j, k, PixelType.TenByTen.value)[0][0]) # x
-                        list_.append(TLC_API.getInstance().GetOneCellData(j, k, PixelType.TenByTen.value)[0][1]) # y
+                        list_.append(TIC_API.getInstance().GetOneCellData(j, k, PixelType.TenByTen.value)[0][0]) # x
+                        list_.append(TIC_API.getInstance().GetOneCellData(j, k, PixelType.TenByTen.value)[0][1]) # y
                         list_.append(64) # w
                         list_.append(48) # h
 
@@ -98,7 +98,7 @@ class DetectObjectProc:
         dic = {}
         
         equalWithFireAndObject = False
-        fire_list = TLC_API.getInstance().GetAllFireList("FireResult") 
+        fire_list = TIC_API.getInstance().GetAllFireList("FireResult") 
 
         fire_list_border = [[False for col in range(10)] for row in range(10)]
         for i in range(10):
@@ -180,7 +180,7 @@ class DetectObjectProc:
         else :
             dic = {"IsObject": False,"ObjectPresentTime":ObjectPresentTime}
             
-        TLC_API.getInstance().SaveAllJson(dic, "02_ResultDataObject")
+        TIC_API.getInstance().SaveAllJson(dic, "02_ResultDataObject")
         
     def __GetPixelData(self, r1, r2): # 추가
         x = 0
@@ -206,7 +206,7 @@ class DetectObjectProc:
 
         return True
 
-NowFireIndexList = TLC_API.getInstance().GetNowFireCellList("FireResult")
+NowFireIndexList = TIC_API.getInstance().GetNowFireCellList("FireResult")
 
 print(NowFireIndexList)
 

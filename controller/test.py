@@ -1,4 +1,4 @@
-from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import TLC_API
+from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 import os
 print(os.getcwd())

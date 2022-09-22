@@ -5476,7 +5476,7 @@
 											"top": 831,
 											"width": 54.1708984375,
 											"height": 13,
-											"text": "TLC_API"
+											"text": "TIC_API"
 										},
 										{
 											"_type": "LabelView",
@@ -6434,7 +6434,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "TLC_API"
+					"name": "TIC_API"
 				}
 			]
 		}

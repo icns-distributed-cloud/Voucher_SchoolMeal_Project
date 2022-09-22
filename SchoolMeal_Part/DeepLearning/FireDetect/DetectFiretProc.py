@@ -1,10 +1,9 @@
 import threading
-import DetectFire_Yolov5
 from datetime import datetime
 from time import sleep
 from enum import Enum
 
-from TLC_API import *
+from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 class Rect(Enum):
     x = 0
@@ -38,7 +37,7 @@ class DetectFireProc:
                 self.__mLock.release()
                 return
 
-            DetectFire_Yolov5.run()
+            #Add Detect Oill Code
 
             sleep(self.__Second)
 
@@ -56,7 +55,7 @@ class DetectFireProc:
         if(self.__mStopFlag == False):
             self.__mStopFlag = True
         
-
+'''
     def __Detect(self):
         print("Start Detect Fire")
         DetectBoxList = DetectFire_Yolov5.run()
@@ -68,8 +67,8 @@ class DetectFireProc:
                 for j in range(10):
                     for k in range(10):
                         CurrentCellBox = []
-                        CurrentCellBox.append(TLC_API.getInstance().GetOneCellData(j, k, PixelType.TenByTen.value)[0][Rect.x.value]) # x
-                        CurrentCellBox.append(TLC_API.getInstance().GetOneCellData(j, k, PixelType.TenByTen.value)[0][Rect.y.value]) # y
+                        CurrentCellBox.append(TIC_API.getInstance().GetOneCellData(j, k, PixelType.TenByTen.value)[0][Rect.x.value]) # x
+                        CurrentCellBox.append(TIC_API.getInstance().GetOneCellData(j, k, PixelType.TenByTen.value)[0][Rect.y.value]) # y
                         CurrentCellBox.append(64) # w
                         CurrentCellBox.append(48) # h
 
@@ -97,7 +96,7 @@ class DetectFireProc:
                 for j in range(10):
                     for k in range(10):
                         if (i[Rect.x.value] == j and i[Rect.y.value] == k):
-                            TmperatureList_10x10 = TLC_API.getInstance().GetTmperatureList(PixelType.TenByTen.value, "DummyData")
+                            TmperatureList_10x10 = TIC_API.getInstance().GetTmperatureList(PixelType.TenByTen.value, "DummyData")
                             if (TmperatureList_10x10 is not None):
                                 if (TmperatureList_10x10[j][k] >= 80):
                                     IsDetectList_10x10[j][k] = True
@@ -110,9 +109,9 @@ class DetectFireProc:
 
         #print(JsonResultData)
 
-        TLC_API.getInstance().SaveAllJson(JsonResultData, "01_ResultDataFire")
+        TIC_API.getInstance().SaveAllJson(JsonResultData, "01_ResultDataFire")
 
-            
+
     def __CheckBoxOverlab(self, box1, box2): # Check is Detect box overlab with 10x10 cell
 
         if(box1[Rect.x.value] > box2[Rect.x.value] + box2[Rect.w.value]):
@@ -132,7 +131,7 @@ class DetectFireProc:
         #rect[3] = min(box1[Rect.y.value] + box1[Rect.h.value], box2[Rect.y.value] + box2[Rect.h.value]) - rect[Rect.y.value]
 
         return True
-
+'''
 
 ## ------------------ How to Use -----------------#
 
