@@ -3,7 +3,7 @@ from datetime import datetime
 from time import sleep
 from enum import Enum
 
-from TIC_API import *
+from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 class Rect(Enum):
     x = 0
@@ -37,7 +37,7 @@ class DetectFireProc:
                 self.__mLock.release()
                 return
 
-            # Add Detect Oill Code
+            self.__Detect()
 
             sleep(self.__Second)
 
@@ -55,6 +55,27 @@ class DetectFireProc:
         if(self.__mStopFlag == False):
             self.__mStopFlag = True
         
+    def __Detect(self):
+        IsDetectList_10x10 =  [[0 for col in range(10)] for row in range(10)]
+
+        for i in range(10):
+            for j in range(10):
+                IsDetectList_10x10[i][j] = False
+
+        DetectFireList = TIC_API.getInstance().GetDetectFireList(PixelType.TenByTen.value, "DetectFireList")
+        TemperatureList_10x10 = TIC_API.getInstance().GetTemperatureList(PixelType.TenByTen.value, "TemperatureData")
+
+        if (DetectFireList is None):
+            return None
+
+        if(len(DetectFireList) == 0):
+            return None
+
+        for i in range(10):
+            for j in range(10):
+                for k in DetectFireList:
+                    if (TemperatureList_10x10[i][j] >= 100) and (i == k[Rect.x.value]) and (j==k[Rect.y.value]):
+                        IsDetectList_10x10[i][j] = True
 
 '''
     def __Detect(self):
@@ -112,7 +133,7 @@ class DetectFireProc:
 
         TIC_API.getInstance().SaveAllJson(JsonResultData, "01_ResultDataFire")
 
-            
+
     def __CheckBoxOverlab(self, box1, box2): # Check is Detect box overlab with 10x10 cell
 
         if(box1[Rect.x.value] > box2[Rect.x.value] + box2[Rect.w.value]):

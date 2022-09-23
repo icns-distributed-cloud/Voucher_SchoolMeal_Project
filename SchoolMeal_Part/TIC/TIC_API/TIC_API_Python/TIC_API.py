@@ -106,8 +106,25 @@ class TIC_API:
             if(json_data != None):
                 return json_data
 
-    def GetTmperatureList(self, type:int ,fileName:str): 
-        """Get TCL->TemperatureList about 10x10 List, First argument value is PixelType, Sceond value is FileName. Return value is 2 Dimensional Array"""
+    def GetDetectFireList(self, fileName:str):
+        """Get Detect Fire Cell in 10x10 List. Return value is 2 Dimensional Array"""
+        if os.path.isfile(self.__mFilePath + fileName + ".json") == False:
+            return None
+
+        datas = self.GetAllJsonData(fileName)
+
+        key ="DetectFireList"
+
+        if datas == None:
+            return None
+        else:
+            if key in datas:
+                return datas[key]
+            else:
+                return None
+
+    def GetTemperatureList(self, type:int ,fileName:str): 
+        """Get TIC->TemperatureList about 10x10 List, First argument value is PixelType, Sceond value is FileName. Return value is 2 Dimensional Array"""
         key =""
         if type == PixelType.TenByTen.value:
             key = "TemperatureList_100"

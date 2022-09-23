@@ -15,8 +15,8 @@ TIC_API.getInstance().SaveAllJson(mTest_Dic, "ResultData") # Save JsonData, Fir 
 ## Get Json File Data
 All_TCL_Data = TIC_API.getInstance().GetAllJsonData("DummyData") # Load All data of TIC Data (Temperature Data, Fire Data...), First argument value is FileNam. Return value is Dictionary about TIC Data
 
-TmperatureList_10x10 = TIC_API.getInstance().GetTmperatureList(PixelType.TenByTen.value, "DummyData") # Get TCL->TemperatureList about 10x10 List, First argument value is PixelType, Sceond value is FileName. Return value is 2 Dimensional Array
-TmperatureList_40x40 = TIC_API.getInstance().GetTmperatureList(PixelType.FortyByForty.value, "DummyData") # Get TCL->TemperatureList about 40x40 List, First argument value is PixelType, Sceond value is FileName. Return value is 2 Dimensional Array
+TmperatureList_10x10 = TIC_API.getInstance().GetTemperatureList(PixelType.TenByTen.value, "DummyData") # Get TCL->TemperatureList about 10x10 List, First argument value is PixelType, Sceond value is FileName. Return value is 2 Dimensional Array
+TmperatureList_40x40 = TIC_API.getInstance().GetTemperatureList(PixelType.FortyByForty.value, "DummyData") # Get TCL->TemperatureList about 40x40 List, First argument value is PixelType, Sceond value is FileName. Return value is 2 Dimensional Array
 
 FireList = TIC_API.getInstance().GetAllFireList("FireResult") # Get TCL->Fire about 10x10 List, First argument is FileName. Return value is 2 Dimensional Array
 NowFireCellList = TIC_API.getInstance().GetNowFireCellList("FireResult") # Get Get Now Fire Cell in 10x10 All Fire List. return 2 Dimensional Array

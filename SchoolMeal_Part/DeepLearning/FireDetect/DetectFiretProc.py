@@ -37,7 +37,7 @@ class DetectFireProc:
                 self.__mLock.release()
                 return
 
-            #Add Detect Oill Code
+            self.__Detect()
 
             sleep(self.__Second)
 
@@ -55,6 +55,25 @@ class DetectFireProc:
         if(self.__mStopFlag == False):
             self.__mStopFlag = True
         
+    def __Detect(self):
+        IsDetectList_10x10 =  [[0 for col in range(10)] for row in range(10)]
+
+        for i in range(10):
+            for j in range(10):
+                IsDetectList_10x10[i][j] = False
+
+        DetectFireList = TIC_API.getInstance().GetDetectFireList(PixelType.TenByTen.value, "DetectFireList")
+        TemperatureList_10x10 = TIC_API.getInstance().GetDetectFireList(PixelType.TenByTen.value, "TemperatureData")
+
+        if (DetectFireList is None):
+            return None
+
+        for i in range(10):
+            for j in range(10):
+                for k in DetectFireList:
+                    if (TemperatureList_10x10[i][j] >= 100) and (i == k[Rect.x.value]) and (j==k[Rect.y.value]):
+                        IsDetectList_10x10[i][j] = True
+
 '''
     def __Detect(self):
         print("Start Detect Fire")
