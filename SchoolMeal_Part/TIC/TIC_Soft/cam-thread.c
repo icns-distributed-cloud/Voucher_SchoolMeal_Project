@@ -43,7 +43,6 @@ void update_fb(void);
 #include "planck.h"
 
 
-
 // -----------------START-ORG-CODE------------------------------------------
 
 #define VENDOR_ID 0x09cb
@@ -58,7 +57,6 @@ static int FFC =   0; // detect FFC
 static int buf85pointer = 0;
 static unsigned char buf85[BUF85SIZE];
 static unsigned char fb_proc[160*120]; //, fb_proc2[160*120*3];
-static unsigned char fb_proc2[160*120*3]; //, fb_proc2[160*120*3];  
 
 static int PixelPosition_10[10][10][4][2] = {};
 static int PixelPosition_40[40][40][4][2] = {};
@@ -88,6 +86,7 @@ static struct t_data_t *tdata;
 //      "percentage":77
 //    }
 // }
+
 
 void
 parse_status(unsigned char *buf)
@@ -228,7 +227,7 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 	if  ((strncmp ((char *)buf85, (char *)magicbyte,4)!=0 )) {
 		//reset buff pointer
 		buf85pointer=0;
-		printf("Reset buffer because of bad Magic Byte!\n");
+		printf("Reset buffer because of bad Magic Byte!\n"); // 에러
 		return;
 	}
       
@@ -237,10 +236,6 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 	uint32_t ThermalSize = buf85[12] + (buf85[13] << 8) + (buf85[14] << 16) + (buf85[15] << 24);
 	uint32_t JpgSize     = buf85[16] + (buf85[17] << 8) + (buf85[18] << 16) + (buf85[19] << 24);
 	uint32_t StatusSize  = buf85[20] + (buf85[21] << 8) + (buf85[22] << 16) + (buf85[23] << 24);
-
-
-	//printf("%d\n", ThermalSize);
-	//printf("%d\n", JpgSize);
 
 	if ( (FrameSize+28) > (buf85pointer) )  {
 		// wait for next chunk
@@ -260,7 +255,6 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 
 	// fb_proc = malloc(160 * 128); // 8 Bit gray buffer really needs only 160 x 120
 	memset(fb_proc, 128, 160*120);       // sizeof(fb_proc) doesn't work, value depends from LUT
-	memset(fb_proc2, 128, 160*120 * 3);       // sizeof(fb_proc) doesn't work, value depends from LUT
   
 	//fb_proc2 = malloc(160 * 128 * 3); // 8x8x8  Bit RGB buffer 
 
@@ -307,29 +301,33 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 	}
   
 	// calc medium of 2x2 center pixels
-	//int med = (pix[59 * 160 + 79]+pix[59 * 160 + 80]+pix[60 * 160 + 79]+pix[60 * 160 + 80])/4;
-	
-	int frame_width2 = 80;
-	int frame_height2 = 80;
-	int frame_owidth2 = 80;
-	int frame_oheight2 = 60;
-	
-	
-	int hw = frame_owidth2 / 2;
-    int hh = frame_oheight2 / 2;
+	int med = (pix[59 * 160 + 79]+pix[59 * 160 + 80]+pix[60 * 160 + 79]+pix[60 * 160 + 80])/4;
 
+	tdata->t_min = raw2temperature(min);
+	tdata->t_max = raw2temperature(max);
+	tdata->t_center = raw2temperature(med);
 
-	int med = 0;
-
-	med = pix[(hh - 1) * frame_owidth2 + hw - 1] +
-          pix[(hh - 1) * frame_owidth2 + hw] +
-          pix[hh * frame_owidth2 + hw - 1] +
-          pix[hh * frame_owidth2 + hw];
-    med /= 4;
-    
-   
-    
-    int num =0;
+	if (tdata->ir_buffer == NULL) {
+		tdata->ir_buffer = (unsigned char *)malloc(640*480*4);
+		fprintf(stderr, "nb\n");
+	}
+	for (y = 0; y < 120; ++y) {
+		for (x = 0; x < 160; ++x) {
+			// fb_proc is the gray scale frame buffer
+			v=fb_proc[y * 160 + x] ;   // unsigned char!!
+			tdata->ir_buffer[4*y * 160 + x*4] = 
+				tdata->color_palette[3 * v + 2];  // B
+			tdata->ir_buffer[(4*y * 160 + x*4)+1] = 
+				tdata->color_palette[3 * v + 1]; // G
+			tdata->ir_buffer[(4*y * 160 + x*4)+2] = 
+				tdata->color_palette[3 * v]; // R
+//			ir_buffer[(4*y * 160 + x*4)+3] = 
+//				0x00; // A, empty
+		}
+	}
+	////
+	
+	int num =0;
     
     for(int i=0; i < 10; i++)
     {
@@ -381,66 +379,13 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 
 			}
 		}
-		
-		
-
-
-
-	tdata->t_min = raw2temperature(min);
-	tdata->t_max = raw2temperature(max);
-	tdata->t_center = raw2temperature(med);
-	
-	//printf("%f",raw2temperature(med));
-
-	if (tdata->ir_buffer == NULL) {
-		tdata->ir_buffer = (unsigned char *)malloc(frame_width2 * frame_height2 * 3);
-		fprintf(stderr, "nb\n");
-	}
-	
-	int disp=0;
-	assert(tdata->ir_buffer);
-
- 
-                        
-	for (y = 0; y < 120; ++y) {
-		for (x = 0; x < 160; ++x) {
-			// fb_proc is the gray scale frame buffer
-			v=fb_proc[y * 160 + x] ;   // unsigned char!!
-			tdata->ir_buffer[4*y * 160 + x*4] = 
-				tdata->color_palette[3 * v + 2];  // B
-			tdata->ir_buffer[(4*y * 160 + x*4)+1] = 
-				tdata->color_palette[3 * v + 1]; // G
-			tdata->ir_buffer[(4*y * 160 + x*4)+2] = 
-				tdata->color_palette[3 * v]; // R
-//			ir_buffer[(4*y * 160 + x*4)+3] = 
-//				0x00; // A, empty
-		}
-	}
-	
-	/*  RGB Test Code, Have Error
-	 * 
-		    for (y = 0; y < frame_height2; ++y)
-            for (x = 0; x < frame_width2; ++x)
-                for (disp = 0; disp < 3; disp++)
-                    tdata->ir_buffer[3 * y * frame_width2 + 3 * x + disp] =
-                        colormap[3 * (y * 256 / frame_height2) + disp];
 	
 	
-	 // build RGB image
-    for (y = 0; y < frame_height2; y++) {
-        for (x = 0; x < frame_width2; x++) {
-            // fb_proc is the gray scale frame buffer
-            v = fb_proc[y * frame_owidth2 + x];
-            if (1)
-                //v = 255 - v;
-
-            for (disp = 0; disp < 3; disp++)
-				tdata->ir_buffer[3 * y * frame_owidth2 + 3 * x + disp] = colormap[3 * v + disp];
-              //  // fb_proc2 is a 24bit RGB buffer
-              //  fb_proc2[3 * y * frame_owidth2 + 3 * x + disp] = colormap[3 * v + disp];
-        }
-    }
-    */
+	
+	
+	
+	/////
+	
 	
 	
     
@@ -464,6 +409,8 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 	//free(fb_proc);                    // thermal RAW
 	//free(fb_proc2);                   // visible jpg
 }
+
+
 
 void CReatePixelData(int w, int h, int x, int y, int type)
 {
@@ -512,15 +459,17 @@ void CReatePixelData(int w, int h, int x, int y, int type)
 }
 
 
+
 void init()
 {
 	
-	CReatePixelData(80,60,10,10,0);
-	CReatePixelData(80,60,40,40,1);
+	CReatePixelData(160,120,10,10,0);
+	CReatePixelData(160,120,40,40,1);
 	
 	
 	
 	}
+
 
 static int
 find_lvr_flirusb(void)
@@ -576,8 +525,8 @@ int
 EPloop(unsigned char *colormap)
 {    
 	
-	
 	init();
+	
 int r = 1;
 
 	r = libusb_init(NULL);
@@ -639,9 +588,6 @@ int r = 1;
 	while (tdata->flir_run) {
 		switch(state) {
 		         case 1:
-		         
-		         
-		         
 				/* Flir config
 				01 0b 01 00 01 00 00 00 c4 d5
 				0 bmRequestType = 01
@@ -865,14 +811,8 @@ int r = 1;
 
 gpointer cam_thread_main(gpointer user_data)
 {
-	
-	
-	
 	tdata=(struct t_data_t *)user_data;
-	
-	unsigned char colormap[768];
-	
-	EPloop(colormap );
+	EPloop(NULL);
 
 	return NULL;
 }

@@ -15,7 +15,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
 
 
 #include <gtk/gtk.h>
@@ -41,21 +40,6 @@
 #include "palettes/Iron_Black.h"
 #include "palettes/Rainbow.h"
 
-
-
-#include <unistd.h>
-#include <time.h>
-#include <signal.h>
-#include <stdio.h>
-
- 
-
-#include <stdlib.h>
-#include <fcntl.h>
-
-#include <jpeglib.h>
-
-#include "cJSON.h"   
 
 // UI variables
 static GtkWidget *window = NULL;
@@ -90,7 +74,7 @@ gboolean viscam=FALSE;
 
 gpointer cam_thread_main(gpointer user_data);
 
-// data structure shared with camera thread 
+// data structure shared with camera thread
 static struct t_data_t tdata;
 
 
@@ -164,6 +148,7 @@ char tdisp[16];
 }
 
 
+
 void timer()
 {
 	static cairo_surface_t *ps=NULL;
@@ -196,9 +181,6 @@ void timer()
 			tdata.jpeg_buffer=NULL;
 }
 
-
-
-
 void
 store_vis_shot(unsigned char *jpg_buffer, unsigned int jpg_size)
 {
@@ -229,6 +211,7 @@ int fd;
 	}
 	
 	FileWrite();
+	
 }
 
 
@@ -379,8 +362,6 @@ cairo_t *cr;
 }
 
 
-
-
 void
 update_fb(void)
 {
@@ -401,8 +382,6 @@ struct tm *loctime;
 char pname[PATH_MAX];
 char fname[30];
 const char *tmp;
-
-
 
 	now = time(NULL);
 	loctime = localtime (&now);
@@ -928,13 +907,34 @@ int createTimer(timer_t* timerID, int sec, int msec)
 }
 
 
-
- 
 void FileWrite()
 {
     double imdbRating = 8.8;
+    
+/*	time_t now;
+struct tm *loctime;
+char pname[PATH_MAX];
+const char *tmp;
+char fname[30];
+int fd;
+
+	now = time(NULL);
+	loctime = localtime (&now);
+	strftime (fname, 30, "data-%y%m%d%H%M%S", loctime);
+
+	tmp=g_get_user_special_dir(G_USER_DIRECTORY_PICTURES);
+	if (tmp == NULL)
+		tmp = "./";
+	strncpy(pname, tmp, PATH_MAX-30-4); // leave room for filename+extension
+	strncat(pname, "/", PATH_MAX-5); // -5 to leave space for trailing \0 byte + extension
+	strncat(pname, fname, PATH_MAX-5); // -5 to leave space for trailing \0 byte + extension
+	strncat(pname, ".json", PATH_MAX-1); // -5 to leave space for trailing \0 byte + extension
+ FILE* fp = fopen(fname, "w");
+*/
+
 
     FILE* fp = fopen("TemperatureData.json", "w");
+   
 
     fprintf(fp, "{\n");
 
@@ -1012,12 +1012,12 @@ void FileWrite()
     fclose(fp);
 }
  
- 
+
 
 int
 main (int argc, char **argv)
 {
-	tdata.ir_buffer = (unsigned char *)malloc(1440*1080*4);
+	tdata.ir_buffer = (unsigned char *)malloc(640*480*4);
 	tdata.raw_ir_buffer = (unsigned short *)malloc(169*120*2);
 	tdata.emissivity=0.9;
 	tdata.tempreflected=20.0;
@@ -1025,16 +1025,15 @@ main (int argc, char **argv)
 	tdata.t_max=0.0;
 	tdata.t_center=0.0;
 	tdata.flir_run=FALSE;
-	
 
-/*	gapp=gtk_application_new("org.gnome.flirgtk", G_APPLICATION_FLAGS_NONE);
+	/*gapp=gtk_application_new("org.gnome.flirgtk", G_APPLICATION_FLAGS_NONE);
 	g_signal_connect(gapp, "activate", G_CALLBACK (flirgtk_app_activate), NULL);
 	g_application_run (G_APPLICATION (gapp), argc, argv);
-    g_object_unref (gapp);*/
-   
-   
-   
-  tdata.color_palette = palette_Rainbow;
+    g_object_unref (gapp);
+    
+    */
+    
+     tdata.color_palette = palette_Rainbow;
       tdata.flir_run = TRUE;
       
 		memset(&tdata.shutter_state, 0, sizeof(tdata.shutter_state));
@@ -1052,7 +1051,7 @@ main (int argc, char **argv)
         while (1);
     
 
+
 return 0;
 }
-
 

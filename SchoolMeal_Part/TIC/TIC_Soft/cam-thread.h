@@ -42,9 +42,9 @@ struct t_data_t {
 	gboolean flir_run;
 	unsigned char *color_palette;
 	
+		
 	double TLC_10x10[10][10];
 	double TLC_40x40[40][40];
-	
 	
 };
 
