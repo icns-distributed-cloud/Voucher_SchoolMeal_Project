@@ -21,7 +21,6 @@ TmperatureList_40x40 = TIC_API.getInstance().GetTemperatureList(PixelType.FortyB
 FireList = TIC_API.getInstance().GetAllFireList("FireResult") # Get TCL->Fire about 10x10 List, First argument is FileName. Return value is 2 Dimensional Array
 NowFireCellList = TIC_API.getInstance().GetNowFireCellList("FireResult") # Get Get Now Fire Cell in 10x10 All Fire List. return 2 Dimensional Array
 
-
 ## Get Image Pixel Position Data##
 AllPixelList_10x10 = TIC_API.getInstance().GetAllCellData(PixelType.TenByTen.value) # Get All Cell Data, is 10 x 10 Data, First argumenet value is PixelType. return value is 3 Dimensional Array
 AllPixelList_40x40 = TIC_API.getInstance().GetAllCellData(PixelType.FortyByForty.value) # Get All Cell Data, is 40 x 40 Data, First argumenet value is PixelType. return value is 3 Dimensional Array

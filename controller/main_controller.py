@@ -51,7 +51,7 @@ def controller():
                 print()
 
     isMouse, isPerson,isObject,smartConsent = 0, 1, 0, 0
-    dic = {"lightType": 0}
+    
     
     for num, key in enumerate(["IsMouse", "IsPerson", "IsObject", "SmartConsent"]):# enumerate 순서와 데이터를 함께 가져옴
         if key is 'IsMouse' : # 사람이 없을 때
@@ -71,11 +71,19 @@ def controller():
                 dic = {"lightType": 2}
             else :
                 plug.turn_off()
-            
-    if isPerson is 0:
+
+    isFire = TIC_API.getInstance().GetNowFireCellList("FireResult") 
+
+    dic = {"lightType": 0}
+
+    if (len(isFire) > 0) and (isPerson is 0):
         dic = {"lightType": 1}
-    elif (isObject is 1) or (smartConsent is 1) or (isMouse is 1):
+    elif (len(isFire) > 0) and (isObject is 1) :
         dic = {"lightType": 2}
+    elif (smartConsent is 1) :
+        dic = {"lightType": 2}
+    elif isMouse is 1:
+        dic = {"lightType": 3}
              
         
     TLC_API.getInstance().SaveAllJson(dic, "LightType") 
