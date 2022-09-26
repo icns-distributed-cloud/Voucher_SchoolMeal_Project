@@ -173,7 +173,7 @@ class DetectObjectProc:
                     
                     equalWithFireAndObject = True
 
-        ObjectPresentTime = datetime.now()
+        ObjectPresentTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
         
         if equalWithFireAndObject is True:
             dic = {"IsObject": True,"ObjectPresentTime":ObjectPresentTime}

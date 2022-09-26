@@ -9,7 +9,7 @@ class Plug:
         """
         load_dotenv()
 
-        self.__ip = os.environ.get(ip)
+        self.__ip = os.environ.get("IP")
         self.__email = os.environ.get("Email")
         self.__password = os.environ.get("Password")
 

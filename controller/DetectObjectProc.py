@@ -176,9 +176,9 @@ class DetectObjectProc:
         ObjectPresentTime = datetime.now()
         
         if equalWithFireAndObject is True:
-            dic = {"IsObject": True,"ObjectPresentTime":ObjectPresentTime}
+            dic = {"IsObject": 1,"ObjectPresentTime":ObjectPresentTime}
         else :
-            dic = {"IsObject": False,"ObjectPresentTime":ObjectPresentTime}
+            dic = {"IsObject": 0,"ObjectPresentTime":ObjectPresentTime}
             
         TIC_API.getInstance().SaveAllJson(dic, "02_ResultDataObject")
         

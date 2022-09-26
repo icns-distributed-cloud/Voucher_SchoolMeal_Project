@@ -116,10 +116,10 @@ class DetectPersonProc:
         
         if is_fire_danger: # 불 있고 + 사람 없을 때 = 위험 (경보음 발생)
             print("danger")
-            is_person = False
+            is_person = 0
         else:
             print("not danger") # 불 있고 + 사람 있을 때 = 이상 없음
-            is_person = True
+            is_person = 1
         
         # 저장할 내용 dict로 만들기
         mPerson_Dic = { 

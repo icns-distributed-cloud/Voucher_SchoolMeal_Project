@@ -1,14 +1,13 @@
 import json
 import os
-import sys
 import time
-from TIC_API import *
+from TLC_API import *
 from datetime import datetime
-#import TapoP100.PyP100.Control_tapo as tapo
-#from DetectFiretProc import *
+import RestArea_Part.TapoP100.PyP100.Control_tapo as tapo
 from DetectObjectProc import *
 from DetectPersonProc import *
 from DetectMouseProc import *
+from sensor import *
 
 
 def controller(): 
@@ -27,11 +26,9 @@ def controller():
     data_dict = {list(data.keys())[0]:list(data.values())[0] for data in data_list}
     time_dict = {list(data.keys())[1]:list(data.values())[1] for data in data_list}
 
-    datetime_format = "%Y-%m-%d %H:%M:%S.%f"
-    dic = {"result": 0}
-
-
-    for num, key in enumerate(["MousePresentTime", "PersonPresentTime", "ObjectPresentTime"]): # enumerate 순서와 데이터를 함께 가져옴
+    
+    for num, key in enumerate(["MousePresentTime", "PersonPresentTime", "ObjectPresentTime", "SmartConsentPresentTime"]): # enumerate 순서와 데이터를 함께 가져옴
+        datetime_format = "%Y-%m-%d %H:%M:%S.%f"
         datetime_result = datetime.strptime(time_dict[key], datetime_format)
         timeDifference = datetime.now() - datetime_result
         
@@ -50,18 +47,38 @@ def controller():
                 DetectObjectProc.StopThread()
                 DetectObjectProc.RestartThread()
 
-    for num, key in enumerate(["IsMouse", "IsPerson", "IsObject"]):# enumerate 순서와 데이터를 함께 가져옴
-        if key is 'IsPerson' : # 사람이 없을 때
-            if data_dict[key] is False: 
-                dic = {"lightType": num+1}
-                break
-        else : 
-            if data_dict[key] is True: 
-                dic = {"lightType": num+1}
-                break
-            
+            elif key is 'SmartConsentPresentTime' :
+                print()
+
+    isMouse, isPerson,isObject,smartConsent = 0, 1, 0, 0
+    dic = {"lightType": 0}
     
-    TIC_API.getInstance().SaveAllJson(dic, "LightType") 
+    for num, key in enumerate(["IsMouse", "IsPerson", "IsObject", "SmartConsent"]):# enumerate 순서와 데이터를 함께 가져옴
+        if key is 'IsMouse' : # 사람이 없을 때
+            isMouse = data_dict[key]
+            
+        elif key is 'IsPerson' :
+            isPerson = data_dict[key]
+        
+        elif key is 'IsObject' :
+            isObject = data_dict[key]
+            
+        elif key is 'SmartConsent' : 
+            smartConsent = data_dict[key]
+            if data_dict[key] is 1:
+                plug = tapo.Plug("IP2")
+                plug.turn_on()
+                dic = {"lightType": 2}
+            else :
+                plug.turn_off()
+            
+    if isPerson is 0:
+        dic = {"lightType": 1}
+    elif (isObject is 1) or (smartConsent is 1) or (isMouse is 1):
+        dic = {"lightType": 2}
+             
+        
+    TLC_API.getInstance().SaveAllJson(dic, "LightType") 
     
     return 0
     
