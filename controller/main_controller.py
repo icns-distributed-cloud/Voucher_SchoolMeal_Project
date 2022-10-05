@@ -1,22 +1,29 @@
 import json
 import os
 import time
-from TLC_API import *
+from TIC_API import *
+
 from datetime import datetime
-import RestArea_Part.TapoP100.PyP100.Control_tapo as tapo
+
 from DetectObjectProc import *
-from DetectPersonProc import *
-from DetectMouseProc import *
+
+from SchoolMeal_Part.DeepLearning.PersonDetect.DetectPersonProc import *
+from SchoolMeal_Part.DeepLearning.MouseDetect.DetectMouseProc import *
+from SchoolMeal_Part.DeepLearning.MouseDetect.DetectMouse_TIC import *
+
+import RestArea_Part.TapoP100.PyP100.Control_tapo as tapo
+
 from sensor import *
 
 
 def controller(): 
-    
-    file_list = os.listdir("controller/merge_model_04/") # 현재위치 기준
+    TIC_API.SetFilePath("SchoolMeal_Part/TIC_Data/")
+
+    file_list = os.listdir("SchoolMeal_Part/TIC_Data/") # 현재위치 기준
 
 
     # 만약 파일이 없다면?
-    open_list = [open("controller/merge_model_04/" + json_path, 'r') for json_path in file_list]
+    open_list = [open(file_list + json_path, 'r') for json_path in file_list]
     
     data_list = [json.load(json_open) for json_open in open_list]
 
@@ -86,19 +93,22 @@ def controller():
         dic = {"lightType": 3}
              
         
-    TLC_API.getInstance().SaveAllJson(dic, "LightType") 
+    TIC_API.getInstance().SaveAllJson(dic, "LightType") 
     
     return 0
     
         
-mObjectcontrollerTest = DetectObjectProc() # 물체
-mObjectcontrollerTest.Run()
+mObjectcontroller = DetectObjectProc() # 물체
+mObjectcontroller.Run()
 
-mPersoncontrollerTest = DetectPersonProc() # 사람
-mPersoncontrollerTest.Run()
+mPersoncontroller = DetectPersonProc() # 사람
+mPersoncontroller.Run()
 
-mMousecontrollerTest = DetectMouseProc() # 쥐
-mMousecontrollerTest.Run()
+mMousecontroller = DetectMouseProc() # 쥐 야간
+mMousecontroller.Run()
+
+mDetectMouse_TIC = DetectMouse_TIC()  # 쥐 야간
+mDetectMouse_TIC.Run()
 
 while(True):
     function_result = controller()

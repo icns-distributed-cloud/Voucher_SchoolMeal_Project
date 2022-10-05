@@ -1,14 +1,15 @@
-from FireDetect.DetectFiretProc import *
 from ObjectDetect.DetectObjectProc import *
 from PersonDetect.DetectPersonProc import *
+from MouseDetect.DetectMouseProc import *
+
 class YoloContainer:
     
-    __mDetectFireProc = DetectFireProc()
     __mDetectObjectProc = DetectObjectProc() 
     __mDetectPersonProc = DetectPersonProc()
+    __mDetectMouseProc = DetectMouseProc()
 
     def Run(self):
 
-        self.__mDetectFireProc.Run()
         self.__mDetectObjectProc.Run() 
         self.__mDetectPersonProc.Run()
+        self.__mDetectMouseProc.Run()
