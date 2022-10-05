@@ -1,5 +1,7 @@
 import threading
-import DetectPerson_Yolov5
+
+import yolov5_master.DetectPerson_Yolov5 as DetectPerson_Yolov5
+
 from datetime import datetime
 from time import sleep
 

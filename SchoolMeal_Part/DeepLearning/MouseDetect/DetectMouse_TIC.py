@@ -125,8 +125,8 @@ class DetectMouse_TIC:
 
 ## ------------------ How to Use -----------------#
 
-test = DetectYoloProc_Sample()
-test.Run()
+#test = DetectYoloProc_Sample()
+#test.Run()
 
 ## ------------------ How to Use -----------------#
 

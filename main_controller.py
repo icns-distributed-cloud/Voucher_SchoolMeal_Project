@@ -1,15 +1,14 @@
 import json
 import os
 import time
-from TIC_API import *
+from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 from datetime import datetime
 
-from DetectObjectProc import *
 
+from SchoolMeal_Part.DeepLearning.MouseDetect.DetectMouse_TIC import *
 from SchoolMeal_Part.DeepLearning.PersonDetect.DetectPersonProc import *
 from SchoolMeal_Part.DeepLearning.MouseDetect.DetectMouseProc import *
-from SchoolMeal_Part.DeepLearning.MouseDetect.DetectMouse_TIC import *
 
 import RestArea_Part.TapoP100.PyP100.Control_tapo as tapo
 
@@ -51,8 +50,7 @@ def controller():
                 DetectPersonProc.RestartThread()
 
             elif key is 'ObjectPresentTime':
-                DetectObjectProc.StopThread()
-                DetectObjectProc.RestartThread()
+                print()
 
             elif key is 'SmartConsentPresentTime' :
                 print()
@@ -98,8 +96,6 @@ def controller():
     return 0
     
         
-mObjectcontroller = DetectObjectProc() # 물체
-mObjectcontroller.Run()
 
 mPersoncontroller = DetectPersonProc() # 사람
 mPersoncontroller.Run()

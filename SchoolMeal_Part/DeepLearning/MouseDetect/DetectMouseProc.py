@@ -5,7 +5,7 @@ from enum import Enum
 
 from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
 
-import DetectMouse_Yolov5
+import yolov5_master.DetectMouse_Yolov5 as DetectMouse_Yolov5
 
 class Rect(Enum):
     x = 0

@@ -1,5 +1,7 @@
 import threading
-import DetectObject_Yolov5
+
+import yolov5_master.DetectObject_Yolov5 as DetectObject_Yolov5
+
 from datetime import datetime
 from time import sleep
 
