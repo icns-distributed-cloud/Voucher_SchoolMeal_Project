@@ -1,10 +1,11 @@
 import threading
-from time import sleep
-from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import * # Should Import AP
 from collections import deque
 from datetime import datetime
+from time import sleep
+from TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 class DetectMouse_TIC:
+    __mFilePath = "Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/"
 
     __mLock = threading.Lock()
 
@@ -57,20 +58,32 @@ class DetectMouse_TIC:
             self.__mStopFlag = True
             
     
-    
-    def main():
+    def SaveAllJson(self,data:dict, fileName:str):
+        """ Save JsonData, Fir argument value is Dictionary, Second value is FileName"""
+        if not os.path.exists(self.__mFilePath):
+            os.makedirs(self.__mFilePath)
+        
+        if(data != None):
+            with open(self.__mFilePath + fileName + ".json", 'w') as outfile:
+
+                inputData = {}
+                inputData = data
+
+                json.dump(inputData, outfile, indent=4)
+
+    def main(self):
 
         #if(현재시간):
         #    return
 
             ## FilePath
-        TIC_API.getInstance().SetFilePath("SchoolMeal_Part/FLC_Data/") # If You want use other FilePath, You can set W/R file path, Default path is "FLC_Data/", First argument value is Change FilePath
+        TIC_API.getInstance().SetFilePath("Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/") # If You want use other FilePath, You can set W/R file path, Default path is "FLC_Data/", First argument value is Change FilePath
         
         ## Save Json File Data
         MousePresentTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
-        mTest_Dic = {'IsMouse': False,
+        mMouse_Dic = {'IsMouse': False,
                      'MousePresentTime':MousePresentTime} # You Have Use Dictionary when save Data, It's Test Dictionary
-        TIC_API.getInstance().SaveAllJson(mTest_Dic, "05_ResultDataMouseTLC") # Save JsonData, Fir argument value is Dictionary, Second value is FileName
+        self.SaveAllJson(mMouse_Dic, "04_ResultDataMouse") # Save JsonData, Fir argument value is Dictionary, Second value is FileName
         
         first = []
         for i in range(10):
@@ -82,7 +95,7 @@ class DetectMouse_TIC:
         queue = deque([first])
         
         for i in range(30):
-            TmperatureList_10x10 = TIC_API.getInstance().GetTmperatureList(PixelType.TenByTen.value, "DummyData") # Get TCL->TemperatureList about 10x10 List, First argument value is PixelType, Sceond value is FileName. Return value is 2 Dimensional Array
+            TmperatureList_10x10 = TIC_API.getInstance().GetTemperatureList(PixelType.TenByTen.value, "DummyData") # Get TCL->TemperatureList about 10x10 List, First argument value is PixelType, Sceond value is FileName. Return value is 2 Dimensional Array
             queue.append(TmperatureList_10x10)
             sleep(2)
         
@@ -96,9 +109,9 @@ class DetectMouse_TIC:
                 if tmp<35 or tmp>40:
                     # 결과값 True로 변경
                     ## Save Json File Data
-                    mTest_Dic = {'IsMouse': True,
+                    mMouse_Dic = {'IsMouse': True,
                      'MousePresentTime':MousePresentTime} # You Have Use Dictionary when save Data, It's Test Dictionary
-                    TIC_API.getInstance().SaveAllJson(mTest_Dic, "05_ResultDataMouseTLC") # Save JsonData, Fir argument value is Dictionary, Second value is FileName
+                    self.SaveAllJson(mMouse_Dic, "04_ResultDataMouse") # Save JsonData, Fir argument value is Dictionary, Second value is FileName
                     print("Mouse: True")
             have2Check = [[i,j] for i in range(10) for j in range(10) if checkList[i][j]>34 and checkList[i][j]<40]
         
@@ -108,16 +121,16 @@ class DetectMouse_TIC:
             if tmp<35 or tmp>40:
                 # 결과값 True로 변경
                 ## Save Json File Data
-                mTest_Dic = {'IsMouse': True,
+                mMouse_Dic = {'IsMouse': True,
                      'MousePresentTime':MousePresentTime} # You Have Use Dictionary when save Data, It's Test Dictionary
-                TIC_API.getInstance().SaveAllJson(mTest_Dic, "05_ResultDataMouseTLC") # Save JsonData, Fir argument value is Dictionary, Second value is FileName
+                self.SaveAllJson(mMouse_Dic, "04_ResultDataMouse") # Save JsonData, Fir argument value is Dictionary, Second value is FileName
                 print("Mouse: True")
                 
         sleep(5)
         ## Save Json File Data
-        mTest_Dic = {'IsMouse': False,
+        mMouse_Dic = {'IsMouse': False,
                      'MousePresentTime':MousePresentTime} # You Have Use Dictionary when save Data, It's Test Dictionary
-        TIC_API.getInstance().SaveAllJson(mTest_Dic, "05_ResultDataMouseTLC") # Save JsonData, Fir argument value is Dictionary, Second value is FileName        
+        self.SaveAllJson(mMouse_Dic, "04_ResultDataMouse") # Save JsonData, Fir argument value is Dictionary, Second value is FileName    
         print("Mouse: False")
         
         return
@@ -125,8 +138,8 @@ class DetectMouse_TIC:
 
 ## ------------------ How to Use -----------------#
 
-#test = DetectYoloProc_Sample()
-#test.Run()
+test = DetectMouse_TIC()
+test.Run()
 
 ## ------------------ How to Use -----------------#
 

@@ -1,18 +1,18 @@
 import threading
-
 import yolov5_master.DetectPerson_Yolov5 as DetectPerson_Yolov5
-
 from datetime import datetime
 from time import sleep
-
-from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
+from TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 # 테스트용 Weights, Source
-weights = "D:/person_detection/Pascal_yolov5pytorch/yolov5/runs/train/result_hyper3/weights/best.pt" # config를 수정하기
-source = "C:/Users/yuri/Desktop/test_img_640_480.png"
+# weights = "D:/person_detection/Pascal_yolov5pytorch/yolov5/runs/train/result_hyper3/weights/best.pt" # config를 수정하기
+# source = "C:/Users/yuri/Desktop/test_img_640_480.png"
+weights = "C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/Person_best.pt" #  config를 수정하기 C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/DeepLearning/ObjectDetect/best.pt
+source = "C:\dev\Meal\Voucher_SchoolMeal_Project\controller\DummyImage.png" # 테스트할 이미지 C:\dev\Meal\Voucher_SchoolMeal_Project\controller\DummyImage.png
     
 class DetectPersonProc:
-    
+    __mFilePath = "Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/" 
+
     __mLock = threading.Lock()
     
     __mStopFlag = False
@@ -129,13 +129,25 @@ class DetectPersonProc:
                        "PersonPresentTime":now.strftime('%Y-%m-%d %H:%M:%S.%f')
                        }
         # Json으로 저장
-        TIC_API.getInstance().SaveAllJson(mPerson_Dic, "03_ResultDataPerson")
+        #TIC_API.getInstance().SaveAllJson(mPerson_Dic, "03_ResultDataPerson")
+        data = mPerson_Dic
+        fileName = "03_ResultDataPerson"
+        
+        if not os.path.exists(self.__mFilePath):
+            os.makedirs(self.__mFilePath)
+        
+        if(data != None):
+            with open(self.__mFilePath + fileName + ".json", 'w') as outfile:
 
+                inputData = {}
+                inputData = data
+
+                json.dump(inputData, outfile, indent=4)
 
 NowFireIndexList = TIC_API.getInstance().GetNowFireCellList("FireResult")
 
 print(NowFireIndexList)
 
-if NowFireIndexList is not None :
-    test = DetectPersonProc(NowFireIndexList)
-    test.Run()
+if NowFireIndexList is None :
+   start_detect = DetectPersonProc(NowFireIndexList)
+   start_detect.Run()

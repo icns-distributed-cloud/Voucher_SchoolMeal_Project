@@ -1,16 +1,14 @@
 import threading
-
-import yolov5_master.DetectObject_Yolov5 as DetectObject_Yolov5
-
 from datetime import datetime
 from time import sleep
+from TIC.TIC_API.TIC_API_Python.TIC_API import *
+import yolov5_master.DetectObject_Yolov5 as DetectObject_Yolov5
 
-weights = "C:/Users/nosul/ObjectDetection/yolov5/best.pt" #  config를 수정하기
-source = "C:/Users/nosul/ObjectDetection/yolov5/test_image.jpg" # 테스트할 이미지
-
-from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
+weights = "C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/Object_best.pt" #  config를 수정하기 C:\dev\Meal\Voucher_SchoolMeal_Project\SchoolMeal_Part\DeepLearning\ObjectDetect\best.pt
+source = "C:/dev/Meal/Voucher_SchoolMeal_Project/controller/DummyImage.png" # 테스트할 이미지 C:\dev\Meal\Voucher_SchoolMeal_Project\controller\DummyImage.png
 
 class DetectObjectProc:
+    __mFilePath = "Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/" 
 
     __mLock = threading.Lock()
 
@@ -35,7 +33,7 @@ class DetectObjectProc:
                 self.__mLock.release()
                 return
 
-            self.__DetectFire() # This is Test Function, You Shoud Add your Function, then it will run periodically
+            self.__DetectObject() # This is Test Function, You Shoud Add your Function, then it will run periodically
 
             sleep(self.__Second)
 
@@ -58,7 +56,7 @@ class DetectObjectProc:
             
             
             
-    def __DetectFire(self):
+    def __DetectObject(self):
         print("Start Detect Object")
         result = DetectObject_Yolov5.run(weights = weights, source = source)
 
@@ -182,8 +180,21 @@ class DetectObjectProc:
         else :
             dic = {"IsObject": False,"ObjectPresentTime":ObjectPresentTime}
             
-        TIC_API.getInstance().SaveAllJson(dic, "02_ResultDataObject")
+        #TIC_API.getInstance().SaveAllJson(dic, "02_ResultDataObject")
+        data = dic
+        fileName = "02_ResultDataObject"
         
+        if not os.path.exists(self.__mFilePath):
+            os.makedirs(self.__mFilePath)
+        
+        if(data != None):
+            with open(self.__mFilePath + fileName + ".json", 'w') as outfile:
+
+                inputData = {}
+                inputData = data
+
+                json.dump(inputData, outfile, indent=4)
+
     def __GetPixelData(self, r1, r2): # 추가
         x = 0
         y = 1
@@ -212,6 +223,6 @@ NowFireIndexList = TIC_API.getInstance().GetNowFireCellList("FireResult")
 
 print(NowFireIndexList)
 
-if NowFireIndexList is not None :
-    test = DetectObjectProc()
-    test.Run()
+if NowFireIndexList is None :
+    start_detect = DetectObjectProc()
+    start_detect.Run()

@@ -2,10 +2,11 @@ import threading
 from datetime import datetime
 from time import sleep
 from enum import Enum
-
-from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
+from TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 import yolov5_master.DetectMouse_Yolov5 as DetectMouse_Yolov5
+weights = "C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/Mouse_best.pt" #  config를 수정하기 C:\dev\Meal\Voucher_SchoolMeal_Project\SchoolMeal_Part\DeepLearning\ObjectDetect\best.pt
+source = "C:/dev/Meal/Voucher_SchoolMeal_Project/controller/DummyImage.png" # 테스트할 이미지 C:\dev\Meal\Voucher_SchoolMeal_Project\controller\DummyImage.png
 
 class Rect(Enum):
     x = 0
@@ -15,7 +16,6 @@ class Rect(Enum):
     
 
 class DetectMouseProc:
-
     __mLock = threading.Lock()
 
     __mStopFlag = False
@@ -60,7 +60,7 @@ class DetectMouseProc:
 
     def __Detect(self):
         print("Start Detect Fire")
-        DetectBoxList = DetectMouse_Yolov5.run()
+        DetectBoxList = DetectMouse_Yolov5.run(weights = weights, source = source)
 
         BoxOverlabList = []
 
@@ -98,7 +98,7 @@ class DetectMouseProc:
                 for j in range(10):
                     for k in range(10):
                         if (i[Rect.x.value] == j and i[Rect.y.value] == k):
-                            TmperatureList_10x10 = TIC_API.getInstance().GetTmperatureList(PixelType.TenByTen.value, "DummyData")
+                            TmperatureList_10x10 = TIC_API.getInstance().GetTemperatureList(PixelType.TenByTen.value, "DummyData")
                             if (TmperatureList_10x10 is not None):
                                 if (TmperatureList_10x10[j][k] >= 80):
                                     IsDetectList_10x10[j][k] = True
@@ -137,8 +137,8 @@ class DetectMouseProc:
 
 ## ------------------ How to Use -----------------#
 
-#test = DetectFireProc()
-#test.Run()
+test = DetectMouseProc()
+test.Run()
 
 ## ------------------ How to Use -----------------#
 

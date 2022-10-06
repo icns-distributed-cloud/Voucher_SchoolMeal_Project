@@ -7,7 +7,7 @@ from dateutil.tz import gettz
 from dotenv import load_dotenv
 import os
 from enum import Enum
-from TLC_API import *
+from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
 from datetime import datetime
 
 class Sensor_Type(Enum):

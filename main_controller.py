@@ -5,24 +5,24 @@ from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 from datetime import datetime
 
+from SchoolMeal_Part.DetectObjectProc import *
+from SchoolMeal_Part.DetectMouse_TIC import *
+from SchoolMeal_Part.DetectPersonProc import *
+from SchoolMeal_Part.DetectMouseProc import *
 
-from SchoolMeal_Part.DeepLearning.MouseDetect.DetectMouse_TIC import *
-from SchoolMeal_Part.DeepLearning.PersonDetect.DetectPersonProc import *
-from SchoolMeal_Part.DeepLearning.MouseDetect.DetectMouseProc import *
-
-import RestArea_Part.TapoP100.PyP100.Control_tapo as tapo
+#import RestArea_Part.TapoP100.PyP100.Control_tapo as tapo
 
 from sensor import *
 
 
 def controller(): 
-    TIC_API.SetFilePath("SchoolMeal_Part/TIC_Data/")
+    #TIC_API.SetFilePath("SchoolMeal_Part/TIC_Data")
 
-    file_list = os.listdir("SchoolMeal_Part/TIC_Data/") # 현재위치 기준
+    file_list = os.listdir("Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/") # 현재위치 기준 Voucher_SchoolMeal_Project\SchoolMeal_Part\TIC_Data
 
 
     # 만약 파일이 없다면?
-    open_list = [open(file_list + json_path, 'r') for json_path in file_list]
+    open_list = [open("Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/" + json_path, 'r') for json_path in file_list]
     
     data_list = [json.load(json_open) for json_open in open_list]
 
@@ -41,53 +41,55 @@ def controller():
         # detection 4가지 문제 생겼을 시 재 실행 각각 5초가 지났을때 실행해야함
         if int(timeDifference.seconds) > 5 : 
             print("5초 경과했습니다. 강제 종료 후 해당파일 재실행합니다.")
-            if key is 'MousePresentTime' : 
-                DetectMouseProc.StopThread()
-                DetectMouseProc.RestartThread()
+            if key == 'MousePresentTime' : 
+                mMousecontroller.StopThread()
+                mMousecontroller.RestartThread()
 
-            elif key is 'PersonPresentTime':
-                DetectPersonProc.StopThread()
-                DetectPersonProc.RestartThread()
+            elif key == 'PersonPresentTime':
+                mPersoncontroller.StopThread()
+                mPersoncontroller.RestartThread()
 
-            elif key is 'ObjectPresentTime':
-                print()
+            elif key == 'ObjectPresentTime':
+                mObjectcontroller.StopThread()
+                mObjectcontroller.RestartThread()
 
-            elif key is 'SmartConsentPresentTime' :
-                print()
+            # elif key == 'SmartConsentPresentTime' :
+            #     print()
 
     isMouse, isPerson,isObject,smartConsent = 0, 1, 0, 0
     
     
     for num, key in enumerate(["IsMouse", "IsPerson", "IsObject", "SmartConsent"]):# enumerate 순서와 데이터를 함께 가져옴
-        if key is 'IsMouse' : # 사람이 없을 때
+        if key == 'IsMouse' : # 사람이 없을 때
             isMouse = data_dict[key]
             
-        elif key is 'IsPerson' :
+        elif key == 'IsPerson' :
             isPerson = data_dict[key]
         
-        elif key is 'IsObject' :
+        elif key == 'IsObject' :
             isObject = data_dict[key]
             
-        elif key is 'SmartConsent' : 
+        elif key == 'SmartConsent' : 
             smartConsent = data_dict[key]
-            if data_dict[key] is 1:
-                plug = tapo.Plug("IP2")
-                plug.turn_on()
+            if data_dict[key] == 1:
+                #plug = tapo.Plug("IP2")
+                #plug.turn_on()
                 dic = {"lightType": 2}
             else :
-                plug.turn_off()
+                print()
+                #plug.turn_off()
 
     isFire = TIC_API.getInstance().GetNowFireCellList("FireResult") 
 
     dic = {"lightType": 0}
 
-    if (len(isFire) > 0) and (isPerson is 0):
+    if (len(isFire) > 0) and (isPerson == 0):
         dic = {"lightType": 1}
-    elif (len(isFire) > 0) and (isObject is 1) :
+    elif (len(isFire) > 0) and (isObject == 1) :
         dic = {"lightType": 2}
-    elif (smartConsent is 1) :
+    elif (smartConsent == 1) :
         dic = {"lightType": 2}
-    elif isMouse is 1:
+    elif isMouse == 1:
         dic = {"lightType": 3}
              
         
@@ -96,8 +98,12 @@ def controller():
     return 0
     
         
+mObjectcontroller = DetectObjectProc() # 쥐 야간
+mObjectcontroller.Run()
 
-mPersoncontroller = DetectPersonProc() # 사람
+
+NowFireIndexList = TIC_API.getInstance().GetNowFireCellList("FireResult")
+mPersoncontroller = DetectPersonProc(NowFireIndexList) # 사람
 mPersoncontroller.Run()
 
 mMousecontroller = DetectMouseProc() # 쥐 야간
