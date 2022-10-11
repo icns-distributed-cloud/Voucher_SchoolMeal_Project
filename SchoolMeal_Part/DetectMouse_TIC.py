@@ -138,8 +138,8 @@ class DetectMouse_TIC:
 
 ## ------------------ How to Use -----------------#
 
-test = DetectMouse_TIC()
-test.Run()
+# test = DetectMouse_TIC()
+# test.Run()
 
 ## ------------------ How to Use -----------------#
 

@@ -107,7 +107,7 @@ class DetectMouseProc:
             for j in range(10):
                 IsDetectList_10x10[i][j] = False
 
-
+        isMouse = False
         if(len(BoxOverlabList) >= 1):
             for i in BoxOverlabList:
                 for j in range(10):
@@ -117,12 +117,13 @@ class DetectMouseProc:
                             if (TmperatureList_10x10 is not None):
                                 if (TmperatureList_10x10[j][k] >= 80):
                                     IsDetectList_10x10[j][k] = True
+                                    isMouse = True
 
 
         now = datetime.now()
 
-        JsonResultData["FireList_100"] = IsDetectList_10x10
-        JsonResultData["CurrentTime"] = now.strftime('%Y-%m-%d %H:%M:%S')
+        JsonResultData["IsMouse"] = isMouse
+        JsonResultData["MousePresentTime"] = now.strftime('%Y-%m-%d %H:%M:%S')
 
         #print(JsonResultData)
 

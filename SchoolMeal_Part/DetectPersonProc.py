@@ -4,6 +4,10 @@ from datetime import datetime
 from time import sleep
 from TIC.TIC_API.TIC_API_Python.TIC_API import *
 
+import sys
+sys.path.append('C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/')
+from TIC_Data import *
+
 # 테스트용 Weights, Source
 # weights = "D:/person_detection/Pascal_yolov5pytorch/yolov5/runs/train/result_hyper3/weights/best.pt" # config를 수정하기
 # source = "C:/Users/yuri/Desktop/test_img_640_480.png"
@@ -82,14 +86,19 @@ class DetectPersonProc:
         
         # 현재 불이 있는 좌표만 가져옴
         fire_list = self.fire_list # 수정 필요 (어떻게 쓰는지)  
-        
+        # 설
+        TIC_API.getInstance().SetFilePath("Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/")
+        GetDetectFireList = TIC_API.getInstance().GetAllJsonData("DetectFireList")
+        fire_listv2 = TIC_API.getInstance().GetFireFlagData(GetDetectFireList)
+
+
         # False로 10*10행렬 생성
         ten_ten_arr = [[False]*10]*10
         
         # 사람 좌표로 10*10행렬에서 사람이 있는 면적을 표시
         while person_boxes:
             origin_coor = [val.item() for val in person_boxes.pop()]
-            x1, y1, x2, y2 = origin_to_ten(origin_coor)
+            x1, y1, x2, y2 = self.origin_to_ten(origin_coor)
             
             for i in range(x1, x2+1):
                 for j in range(y1, y2+1):
@@ -98,13 +107,13 @@ class DetectPersonProc:
         # 현재 불이 인식되어서 fire_list에 값이 있다면
         #if fire_list:
             # fire_list가 빌때까지 불이 있는 좌표에서 1칸씩의 범위로 사람이 있는지 비교
-        while(fire_list and not is_fire_danger):
+        while(fire_listv2 and not is_fire_danger):
             # i(x), j(y)좌표로 뒤에서부터 하나씩 꺼냄
-            x, y = fire_list.pop() # 가장 뒤에 있는 것을 꺼내기 pop
-            startx = range_check(x, 2)
-            endx = range_check(x, -2)
-            starty = range_check(y, 2)
-            endy = range_check(y, -2)
+            x, y = fire_listv2.pop() # 가장 뒤에 있는 것을 꺼내기 pop
+            startx = self.range_check(x, 2)
+            endx = self.range_check(x, -2)
+            starty = self.range_check(y, 2)
+            endy = self.range_check(y, -2)
             
             for i in range(startx, endx+1):
                 for j in range(starty, endy+1):
@@ -146,7 +155,7 @@ class DetectPersonProc:
 
 NowFireIndexList = TIC_API.getInstance().GetNowFireCellList("FireResult")
 
-print(NowFireIndexList)
+# print(NowFireIndexList)
 
 if NowFireIndexList is None :
    start_detect = DetectPersonProc(NowFireIndexList)

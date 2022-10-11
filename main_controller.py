@@ -5,6 +5,8 @@ from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 from datetime import datetime
 
+from  import *
+
 import sys
 sys.path.append('C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/')
 
@@ -94,7 +96,12 @@ def controller():
 
     # 화구 내 기름의 온도를 가져옴
     detected_oil_temperature = "60.0"
+    TIC_API.getInstance().SetFilePath("Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/")
+    GetDetectFireList = TIC_API.getInstance().GetAllJsonData("DetectFireList")
+    fire_list = TIC_API.getInstance().GetFireFlagData(GetDetectFireList)
+
     required_oil_temperature = "100.0"
+    
     dic = {"lightType": 0}
 
     if (detected_oil_temperature >= required_oil_temperature) and (isPerson == 0):
