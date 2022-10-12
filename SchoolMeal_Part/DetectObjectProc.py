@@ -108,7 +108,7 @@ class DetectObjectProc:
         for i in range(10): # 0~9
             for j in range(10): # 0~9
                 if fire_list[i][j] == True :
-                    fire_list_border[i][j] = True
+                    #fire_list_border[i][j] = True # 해당 불의 위치가 아닌 그 주변 픽셀에 한해서 Detect
                     if i == 0 and j == 0:
                         fire_list_border[i+1][j] = True
                         fire_list_border[i][j+1] = True
@@ -180,7 +180,7 @@ class DetectObjectProc:
         else :
             dic = {"IsObject": False,"ObjectPresentTime":ObjectPresentTime}
             
-        #TIC_API.getInstance().SaveAllJson(dic, "02_ResultDataObject")
+        
         data = dic
         fileName = "02_ResultDataObject"
         

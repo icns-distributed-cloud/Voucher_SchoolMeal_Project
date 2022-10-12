@@ -16,6 +16,8 @@ class Rect(Enum):
     
 
 class DetectMouseProc:
+    __mFilePath = "Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/"
+
     __mLock = threading.Lock()
 
     __mStopFlag = False
@@ -57,6 +59,19 @@ class DetectMouseProc:
         if(self.__mStopFlag == False):
             self.__mStopFlag = True
         
+
+    def SaveAllJson(self,data:dict, fileName:str):
+        """ Save JsonData, Fir argument value is Dictionary, Second value is FileName"""
+        if not os.path.exists(self.__mFilePath):
+            os.makedirs(self.__mFilePath)
+        
+        if(data != None):
+            with open(self.__mFilePath + fileName + ".json", 'w') as outfile:
+
+                inputData = {}
+                inputData = data
+
+                json.dump(inputData, outfile, indent=4)
 
     def __Detect(self):
         print("Start Detect Fire")
@@ -111,7 +126,7 @@ class DetectMouseProc:
 
         #print(JsonResultData)
 
-        TIC_API.getInstance().SaveAllJson(JsonResultData, "04_ResultDataMouse")
+        self.SaveAllJson(JsonResultData, "04_ResultDataMouse")
 
 
     def __CheckBoxOverlab(self, box1, box2): # Check is Detect box overlab with 10x10 cell
