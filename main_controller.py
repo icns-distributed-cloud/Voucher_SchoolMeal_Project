@@ -5,11 +5,11 @@ from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 from datetime import datetime
 
-from  import *
 
 import sys
 sys.path.append('C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/')
 
+from SchoolMeal_Part.TIC_Data import *
 from SchoolMeal_Part.DetectObjectProc import *
 from SchoolMeal_Part.DetectMouse_TIC import *
 from SchoolMeal_Part.DetectPersonProc import *
@@ -22,8 +22,6 @@ from sensor import *
 
 
 def controller(): 
-    #TIC_API.SetFilePath("SchoolMeal_Part/TIC_Data")
-
     file_list = os.listdir("Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/") # 현재위치 기준 Voucher_SchoolMeal_Project\SchoolMeal_Part\TIC_Data
 
 
@@ -95,12 +93,23 @@ def controller():
                 #plug.turn_off()
 
     # 화구 내 기름의 온도를 가져옴
-    detected_oil_temperature = "60.0"
+    detected_oil_temperature = 0
     TIC_API.getInstance().SetFilePath("Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/")
-    GetDetectFireList = TIC_API.getInstance().GetAllJsonData("DetectFireList")
-    fire_list = TIC_API.getInstance().GetFireFlagData(GetDetectFireList)
+    GetDetectFire = TIC_API.getInstance().GetAllJsonData("DetectFireList")
+    GetDetectFireList = GetDetectFire["DetectFireList"]
 
-    required_oil_temperature = "100.0"
+    GetTemperature = TIC_API.getInstance().GetAllJsonData("DummyData")
+    GetTemperatureList = GetTemperature["TemperatureList_100"]
+
+    # detected_oil_temperature : 화구에 있는 위치 데이터의 온도 중 가장 큰 온도
+    for i in range (0, len(GetDetectFireList)) :
+        x = GetDetectFireList[i][0]
+        y = GetDetectFireList[i][1]
+        if(detected_oil_temperature <= GetTemperatureList[x][y]):
+            detected_oil_temperature = GetTemperatureList[x][y]
+        
+
+    required_oil_temperature = 60.0
     
     dic = {"lightType": 0}
 

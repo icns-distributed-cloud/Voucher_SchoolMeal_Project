@@ -21,7 +21,7 @@ class DetectObjectProc:
 
     __mMyThread = None
 
-    __Second = 1 # Default Wait Second is 1 Sec
+    __Second = 5 # Default Wait Second is 1 Sec
 
     def Run(self): # Just Call This Function
 
