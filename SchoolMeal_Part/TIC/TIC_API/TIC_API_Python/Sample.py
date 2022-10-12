@@ -26,7 +26,10 @@ AllPixelList_10x10 = TIC_API.getInstance().GetAllCellData(PixelType.TenByTen.val
 AllPixelList_40x40 = TIC_API.getInstance().GetAllCellData(PixelType.FortyByForty.value) # Get All Cell Data, is 40 x 40 Data, First argumenet value is PixelType. return value is 3 Dimensional Array
 
 OnePixel_10x10 = TIC_API.getInstance().GetOneCellData(0, 0, PixelType.TenByTen.value) # Get One Cell in 10 x 10 Data, First,Second argument value is x,y vertex, Third is PixelType, return 2 Dimensional Array, 
-OnePixel_40x40 =TIC_API.getInstance().GetOneCellData(0, 0, PixelType.FortyByForty.value) # Get One Cell in 40 x 40 Data, First,Second argument value is x,y vertex, Third is PixelType, return 2 Dimensional Array, 
+OnePixel_40x40 = TIC_API.getInstance().GetOneCellData(0, 0, PixelType.FortyByForty.value) # Get One Cell in 40 x 40 Data, First,Second argument value is x,y vertex, Third is PixelType, return 2 Dimensional Array, 
 
+GetDetectFireList = TIC_API.getInstance().GetAllJsonData("DetectFireList") # Get DetetctFireList Data. return 2 Dimensional Array
+
+GetFireFalgData = TIC_API.getInstance().GetFireFlagData(GetDetectFireList) # Get All Fire True or False List. return 2 Dimensional Array
 
 #---------------------- How to Use --------------------------#

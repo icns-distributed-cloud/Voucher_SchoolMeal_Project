@@ -1,4 +1,5 @@
 import json
+from math import fabs
 from multiprocessing.sharedctypes import Value
 import os
 from enum import Enum
@@ -60,7 +61,7 @@ class TIC_API:
 
 
     def SaveAllJson(self, data:dict, fileName:str):
-        """ Save JsonData, Fir argument value is Dictionary, Second value is FileName"""
+        """ Save JsonData, First argument value is Dictionary, Second value is FileName"""
         if not os.path.exists(self.__mFilePath):
             os.makedirs(self.__mFilePath)
         
@@ -72,6 +73,23 @@ class TIC_API:
 
                 json.dump(inputData, outfile, indent=4)
 
+
+    def GetFireFlagData(self, data:list[list]):
+        """Get is Fire True or False Data, First argument value is 2 Dimensional Array, Return Vlaue is 2 Dimensional Array"""
+
+        if data == None:
+            return None
+
+        data_list = [[0 for col in range(10)] for row in range(10)]
+        
+        for i in range(10):
+            for j in range(10):
+                data_list[i][j] = False
+        
+        for i in range(len(data["DetectFireList"])):
+            data_list[data["DetectFireList"][i][0]][data["DetectFireList"][i][1]] = True
+
+        return data_list
 
     # def SaveOneJson(self, data, fileName:str):
     #     if(data == None):
