@@ -5,7 +5,6 @@ from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 from datetime import datetime
 
-
 import sys
 sys.path.append('C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/')
 
@@ -110,6 +109,7 @@ def controller():
         
 
     required_oil_temperature = 60.0
+
     
     dic = {"lightType": 0}
 

@@ -123,7 +123,7 @@ class DetectMouseProc:
         now = datetime.now()
 
         JsonResultData["IsMouse"] = isMouse
-        JsonResultData["MousePresentTime"] = now.strftime('%Y-%m-%d %H:%M:%S')
+        JsonResultData["MousePresentTime"] = now.strftime('%Y-%m-%d %H:%M:%S.%f')
 
         #print(JsonResultData)
 
