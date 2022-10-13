@@ -194,7 +194,7 @@ int fd;
 	now = time(NULL);
 	loctime = localtime (&now);
 	//strftime (fname, 30, "viscam-%y%m%d%H%M%S", loctime);
-	strftime (fname, 30, "Image", loctime);
+	strftime (fname, 30, "TIC_Image", loctime);
 
 	tmp=g_get_user_special_dir(G_USER_DIRECTORY_PICTURES);
 	if (tmp == NULL)
@@ -933,7 +933,7 @@ int fd;
 */
 
 
-    FILE* fp = fopen("TemperatureData.json", "w");
+    FILE* fp = fopen("TIC_Data.json", "w");
    
 
     fprintf(fp, "{\n");
