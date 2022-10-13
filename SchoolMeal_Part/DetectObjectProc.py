@@ -2,6 +2,11 @@ import threading
 from datetime import datetime
 from time import sleep
 from TIC.TIC_API.TIC_API_Python.TIC_API import *
+
+import sys
+sys.path.append('C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/')
+from TIC_Data import *
+
 import yolov5_master.DetectObject_Yolov5 as DetectObject_Yolov5
 
 weights = "C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/Object_best.pt" #  config를 수정하기 C:\dev\Meal\Voucher_SchoolMeal_Project\SchoolMeal_Part\DeepLearning\ObjectDetect\best.pt
@@ -16,7 +21,7 @@ class DetectObjectProc:
 
     __mMyThread = None
 
-    __Second = 1 # Default Wait Second is 1 Sec
+    __Second = 5 # Default Wait Second is 1 Sec
 
     def Run(self): # Just Call This Function
 
@@ -98,8 +103,12 @@ class DetectObjectProc:
         dic = {}
         
         equalWithFireAndObject = False
-        fire_list = TIC_API.getInstance().GetAllFireList("FireResult") 
+        ## DetectFireList.json {"DetectFireList": [[1,2], [2,3]]} ## 계속 늘어날수있음
 
+        TIC_API.getInstance().SetFilePath("Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/")
+        GetDetectFireList = TIC_API.getInstance().GetAllJsonData("DetectFireList")
+        fire_list = TIC_API.getInstance().GetFireFlagData(GetDetectFireList)
+        
         fire_list_border = [[False for col in range(10)] for row in range(10)]
         for i in range(10):
             for j in range(10):
@@ -221,7 +230,7 @@ class DetectObjectProc:
 
 NowFireIndexList = TIC_API.getInstance().GetNowFireCellList("FireResult")
 
-print(NowFireIndexList)
+# print(NowFireIndexList)
 
 if NowFireIndexList is None :
     start_detect = DetectObjectProc()

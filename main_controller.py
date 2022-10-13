@@ -8,6 +8,7 @@ from datetime import datetime
 import sys
 sys.path.append('C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/')
 
+from SchoolMeal_Part.TIC_Data import *
 from SchoolMeal_Part.DetectObjectProc import *
 from SchoolMeal_Part.DetectMouse_TIC import *
 from SchoolMeal_Part.DetectPersonProc import *
@@ -20,8 +21,6 @@ from sensor import *
 
 
 def controller(): 
-    #TIC_API.SetFilePath("SchoolMeal_Part/TIC_Data")
-
     file_list = os.listdir("Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/") # 현재위치 기준 Voucher_SchoolMeal_Project\SchoolMeal_Part\TIC_Data
 
 
@@ -93,8 +92,25 @@ def controller():
                 #plug.turn_off()
 
     # 화구 내 기름의 온도를 가져옴
-    detected_oil_temperature = "60.0"
-    required_oil_temperature = "100.0"
+    detected_oil_temperature = 0
+    TIC_API.getInstance().SetFilePath("Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/")
+    GetDetectFire = TIC_API.getInstance().GetAllJsonData("DetectFireList")
+    GetDetectFireList = GetDetectFire["DetectFireList"]
+
+    GetTemperature = TIC_API.getInstance().GetAllJsonData("DummyData")
+    GetTemperatureList = GetTemperature["TemperatureList_100"]
+
+    # detected_oil_temperature : 화구에 있는 위치 데이터의 온도 중 가장 큰 온도
+    for i in range (0, len(GetDetectFireList)) :
+        x = GetDetectFireList[i][0]
+        y = GetDetectFireList[i][1]
+        if(detected_oil_temperature <= GetTemperatureList[x][y]):
+            detected_oil_temperature = GetTemperatureList[x][y]
+        
+
+    required_oil_temperature = 60.0
+
+    
     dic = {"lightType": 0}
 
     if (detected_oil_temperature >= required_oil_temperature) and (isPerson == 0):
@@ -112,20 +128,20 @@ def controller():
     return 0
     
 #### prototype test 이후 삭제 예정 ####
-mObjectcontroller = DetectObjectProc() #  Flammable Object Detection function call
-mObjectcontroller.Run()
+# mObjectcontroller = DetectObjectProc() #  Flammable Object Detection function call
+# mObjectcontroller.Run()
 
 
-NowFireIndexList = TIC_API.getInstance().GetNowFireCellList("FireResult")
-mPersoncontroller = DetectPersonProc(NowFireIndexList) # Person Detection function call
-mPersoncontroller.Run()
+# NowFireIndexList = TIC_API.getInstance().GetNowFireCellList("FireResult")
+# mPersoncontroller = DetectPersonProc(NowFireIndexList) # Person Detection function call
+# mPersoncontroller.Run()
 
 # 쥐의 경우 낮 / 밤의 경우 특정 시간을 정해서 시간대로 실행 시켜야 함. (현재 오후 23:59:59.999999 ~ 오전 06:00:00.000000)
-mMousecontroller = DetectMouseProc() # 쥐 주간
-mMousecontroller.Run()
+# mMousecontroller = DetectMouseProc() # 쥐 주간
+# mMousecontroller.Run()
 
-mDetectMouse_TIC = DetectMouse_TIC()  # 쥐 야간
-mDetectMouse_TIC.Run()
+# mDetectMouse_TIC = DetectMouse_TIC()  # 쥐 야간
+# mDetectMouse_TIC.Run()
 
 while(True):
     function_result = controller()
