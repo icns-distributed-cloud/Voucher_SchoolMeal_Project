@@ -128,20 +128,20 @@ def controller():
     return 0
     
 #### prototype test 이후 삭제 예정 ####
-mObjectcontroller = DetectObjectProc() #  Flammable Object Detection function call
-mObjectcontroller.Run()
+# mObjectcontroller = DetectObjectProc() #  Flammable Object Detection function call
+# mObjectcontroller.Run()
 
 
-NowFireIndexList = TIC_API.getInstance().GetNowFireCellList("FireResult")
-mPersoncontroller = DetectPersonProc(NowFireIndexList) # Person Detection function call
-mPersoncontroller.Run()
+# NowFireIndexList = TIC_API.getInstance().GetNowFireCellList("FireResult")
+# mPersoncontroller = DetectPersonProc(NowFireIndexList) # Person Detection function call
+# mPersoncontroller.Run()
 
 # 쥐의 경우 낮 / 밤의 경우 특정 시간을 정해서 시간대로 실행 시켜야 함. (현재 오후 23:59:59.999999 ~ 오전 06:00:00.000000)
-mMousecontroller = DetectMouseProc() # 쥐 주간
-mMousecontroller.Run()
+# mMousecontroller = DetectMouseProc() # 쥐 주간
+# mMousecontroller.Run()
 
-mDetectMouse_TIC = DetectMouse_TIC()  # 쥐 야간
-mDetectMouse_TIC.Run()
+# mDetectMouse_TIC = DetectMouse_TIC()  # 쥐 야간
+# mDetectMouse_TIC.Run()
 
 while(True):
     function_result = controller()
