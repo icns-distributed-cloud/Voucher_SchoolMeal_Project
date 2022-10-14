@@ -5,7 +5,7 @@ from time import sleep
 from TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 class DetectMouse_TIC:
-    __mFilePath = "Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/"
+    __mFilePath = "rolo/"
 
     __mLock = threading.Lock()
 
@@ -13,7 +13,7 @@ class DetectMouse_TIC:
 
     __mMyThread = None
 
-    __Second = 1 # Default Wait Second is 1 Sec
+    __Second = 5 # Default Wait Second is 5 Sec
 
     def Run(self): # Just Call This Function
 

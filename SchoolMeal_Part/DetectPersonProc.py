@@ -5,17 +5,17 @@ from time import sleep
 from TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 import sys
-sys.path.append('C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/')
-from TIC_Data import *
+sys.path.append('/home/icns/gitMeal/Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/')
+from TIC_Data import *  
 
 # 테스트용 Weights, Source
 # weights = "D:/person_detection/Pascal_yolov5pytorch/yolov5/runs/train/result_hyper3/weights/best.pt" # config를 수정하기
 # source = "C:/Users/yuri/Desktop/test_img_640_480.png"
-weights = "C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/Person_best.pt" #  config를 수정하기 C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/DeepLearning/ObjectDetect/best.pt
-source = "C:\dev\Meal\Voucher_SchoolMeal_Project\controller\DummyImage.png" # 테스트할 이미지 C:\dev\Meal\Voucher_SchoolMeal_Project\controller\DummyImage.png
-    
+weights = "/home/icns/gitMeal/Voucher_SchoolMeal_Project/SchoolMeal_Part/Person_best.pt" #  config를 수정하기 C:\dev\Meal\Voucher_SchoolMeal_Project\SchoolMeal_Part\DeepLearning\ObjectDetect\best.pt
+source = "/home/icns/Desktop/TIC_Soft/TIC_Image.jpg" # 테스트할 이미지 "Voucher_SchoolMeal_Project/controller/DummyImage.png"
+   
 class DetectPersonProc:
-    __mFilePath = "Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/" 
+    __mFilePath ="gitMeal/Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/"
 
     __mLock = threading.Lock()
     
@@ -97,10 +97,11 @@ class DetectPersonProc:
         is_fire_danger = False
         
         # 사람을 Detection해서 사람 좌표 가져옴
+        print("Start Detect Person")
         person_boxes = DetectPerson_Yolov5.run(weights = weights, source = source)
         
         # 현재 불이 있는 좌표만 가져옴
-        TIC_API.getInstance().SetFilePath("Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/")
+        TIC_API.getInstance().SetFilePath("/home/icns/gitMeal/Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/")
         GetDetectFireList = TIC_API.getInstance().GetAllJsonData("DetectFireList")
         fire_list = TIC_API.getInstance().GetFireFlagData(GetDetectFireList)
 
@@ -132,10 +133,10 @@ class DetectPersonProc:
         
         if is_fire_danger: # 불 있고 + 사람 없을 때 = 위험 (경보음 발생)
             print("danger")
-            is_person = 0
+            is_person = False
         else:
             print("not danger") # 불 있고 + 사람 있을 때 = 이상 없음
-            is_person = 1
+            is_person = True
         
         # 저장할 내용 dict로 만들기
         mPerson_Dic = { 

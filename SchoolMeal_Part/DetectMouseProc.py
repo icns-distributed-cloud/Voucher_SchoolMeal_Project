@@ -5,8 +5,8 @@ from enum import Enum
 from TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 import yolov5_master.DetectMouse_Yolov5 as DetectMouse_Yolov5
-weights = "C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/Mouse_best.pt" #  config를 수정하기 C:\dev\Meal\Voucher_SchoolMeal_Project\SchoolMeal_Part\DeepLearning\ObjectDetect\best.pt
-source = "C:/dev/Meal/Voucher_SchoolMeal_Project/controller/DummyImage.png" # 테스트할 이미지 C:\dev\Meal\Voucher_SchoolMeal_Project\controller\DummyImage.png
+weights = "/home/icns/gitMeal/Voucher_SchoolMeal_Project/SchoolMeal_Part/Mouse_best.pt" #  config를 수정하기 C:\dev\Meal\Voucher_SchoolMeal_Project\SchoolMeal_Part\DeepLearning\ObjectDetect\best.pt
+source = "/home/icns/Desktop/TIC_Soft/TIC_Image.jpg" # 테스트할 이미지 "Voucher_SchoolMeal_Project/controller/DummyImage.png"
 
 class Rect(Enum):
     x = 0
@@ -16,7 +16,7 @@ class Rect(Enum):
     
 
 class DetectMouseProc:
-    __mFilePath = "Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/"
+    __mFilePath ="gitMeal/Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/"
 
     __mLock = threading.Lock()
 
@@ -74,7 +74,7 @@ class DetectMouseProc:
                 json.dump(inputData, outfile, indent=4)
 
     def __Detect(self):
-        print("Start Detect Fire")
+        print("Start Detect Mouse")
         DetectBoxList = DetectMouse_Yolov5.run(weights = weights, source = source)
 
         BoxOverlabList = []

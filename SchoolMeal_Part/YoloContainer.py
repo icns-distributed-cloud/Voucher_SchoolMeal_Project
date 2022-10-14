@@ -13,13 +13,11 @@ class YoloContainer:
 
     ## 계속 detect만되는 상황 ## 수정필요
     __mDetectObjectProc = DetectObjectProc() 
-    __mDetectPersonProc = NONE
+    __mDetectPersonProc = DetectPersonProc()
     __mDetectMouseProc = DetectMouseProc()
     __mDetectMouse_TIC = DetectMouse_TIC()
 
     def Run(self):
-        NowFireIndexList = TIC_API.getInstance().GetNowFireCellList("FireResult")
-        self.__mDetectPersonProc = DetectPersonProc(NowFireIndexList)
 
         self.__mDetectObjectProc.Run() 
         self.__mDetectPersonProc.Run()

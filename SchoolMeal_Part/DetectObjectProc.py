@@ -4,16 +4,16 @@ from time import sleep
 from TIC.TIC_API.TIC_API_Python.TIC_API import *
 
 import sys
-sys.path.append('C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/')
+sys.path.append('/home/icns/gitMeal/Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/')
 from TIC_Data import *
 
 import yolov5_master.DetectObject_Yolov5 as DetectObject_Yolov5
 
-weights = "C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/Object_best.pt" #  config를 수정하기 C:\dev\Meal\Voucher_SchoolMeal_Project\SchoolMeal_Part\DeepLearning\ObjectDetect\best.pt
-source = "C:/dev/Meal/Voucher_SchoolMeal_Project/controller/DummyImage.png" # 테스트할 이미지 C:\dev\Meal\Voucher_SchoolMeal_Project\controller\DummyImage.png
+weights = "/home/icns/gitMeal/Voucher_SchoolMeal_Project/SchoolMeal_Part/Object_best.pt" #  config를 수정하기 C:\dev\Meal\Voucher_SchoolMeal_Project\SchoolMeal_Part\DeepLearning\ObjectDetect\best.pt
+source = "/home/icns/Desktop/TIC_Soft/TIC_Image.jpg" # 테스트할 이미지 "Voucher_SchoolMeal_Project/controller/DummyImage.png"
 
 class DetectObjectProc:
-    __mFilePath = "Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/" 
+    __mFilePath ="gitMeal/Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/"
 
     __mLock = threading.Lock()
 
@@ -105,7 +105,7 @@ class DetectObjectProc:
         equalWithFireAndObject = False
         ## DetectFireList.json {"DetectFireList": [[1,2], [2,3]]} ## 계속 늘어날수있음
 
-        TIC_API.getInstance().SetFilePath("Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/")
+        TIC_API.getInstance().SetFilePath("/home/icns/gitMeal/Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/")
         GetDetectFireList = TIC_API.getInstance().GetAllJsonData("DetectFireList")
         fire_list = TIC_API.getInstance().GetFireFlagData(GetDetectFireList)
         

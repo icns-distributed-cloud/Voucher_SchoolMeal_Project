@@ -6,8 +6,9 @@ from SchoolMeal_Part.TIC.TIC_API.TIC_API_Python.TIC_API import *
 from datetime import datetime
 
 import sys
-sys.path.append('C:/dev/Meal/Voucher_SchoolMeal_Project/SchoolMeal_Part/')
+sys.path.append('/home/icns/gitMeal/Voucher_SchoolMeal_Project/SchoolMeal_Part')
 
+# from SchoolMeal_Part.YoloContainer import *
 from SchoolMeal_Part.TIC_Data import *
 from SchoolMeal_Part.DetectObjectProc import *
 from SchoolMeal_Part.DetectMouse_TIC import *
@@ -21,11 +22,11 @@ from sensor import *
 
 
 def controller(): 
-    file_list = os.listdir("Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/") # 현재위치 기준 Voucher_SchoolMeal_Project\SchoolMeal_Part\TIC_Data
+    file_list = os.listdir("/home/icns/gitMeal/Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data") # 현재위치 기준 Voucher_SchoolMeal_Project\SchoolMeal_Part\TIC_Data
 
 
     # 만약 파일이 없다면?
-    open_list = [open("Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/" + json_path, 'r') for json_path in file_list]
+    open_list = [open("/home/icns/gitMeal/Voucher_SchoolMeal_Project/SchoolMeal_Part/Detected_Data/" + json_path, 'r') for json_path in file_list]
     
     data_list = [json.load(json_open) for json_open in open_list]
 
@@ -46,9 +47,9 @@ def controller():
         mNight= now.replace(hour=23, minute=59, second=59, microsecond=999999)
         
         # detection 4가지 문제 생겼을 시 재 실행 각각 5초가 지났을때 실행해야함
-        if int(timeDifference.seconds) > 5 : 
-            print("5초 경과했습니다. 강제 종료 후 해당파일 재실행합니다.")
+        if int(timeDifference.seconds) > 30 : 
             if key == 'MousePresentTime' : 
+                print("Mouse, 5 seconds delayed . stop and restart.")
                 mMousecontroller.StopThread()
                 mDetectMouse_TIC.StopThread()
                 if (now < mNight) and (now >= mMornning) :
@@ -56,10 +57,12 @@ def controller():
                 else :
                     mDetectMouse_TIC.RestartThread()
             elif key == 'PersonPresentTime':
+                print("Person, 5 seconds delayed . stop and restart.")
                 mPersoncontroller.StopThread()
                 mPersoncontroller.RestartThread()
 
             elif key == 'ObjectPresentTime':
+                print("Object, 5 seconds delayed . stop and restart.")
                 mObjectcontroller.StopThread()
                 mObjectcontroller.RestartThread()
             ############################# NEED Smart outlet #############################
@@ -93,7 +96,7 @@ def controller():
 
     # 화구 내 기름의 온도를 가져옴
     detected_oil_temperature = 0
-    TIC_API.getInstance().SetFilePath("Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/")
+    TIC_API.getInstance().SetFilePath("/home/icns/gitMeal/Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/")
     GetDetectFire = TIC_API.getInstance().GetAllJsonData("DetectFireList")
     GetDetectFireList = GetDetectFire["DetectFireList"]
 
@@ -128,19 +131,20 @@ def controller():
     return 0
     
 #### prototype test 이후 삭제 예정 ####
-# mObjectcontroller = DetectObjectProc() #  Flammable Object Detection function call
+mObjectcontroller = DetectObjectProc() #  Flammable Object Detection function call
 # mObjectcontroller.Run()
 
 
-# NowFireIndexList = TIC_API.getInstance().GetNowFireCellList("FireResult")
-# mPersoncontroller = DetectPersonProc(NowFireIndexList) # Person Detection function call
+#NowFireIndexList = TIC_API.getInstance().GetNowFireCellList("FireResult")
+#mPersoncontroller = DetectPersonProc(NowFireIndexList) # Person Detection function call
+mPersoncontroller = DetectPersonProc()
 # mPersoncontroller.Run()
 
 # 쥐의 경우 낮 / 밤의 경우 특정 시간을 정해서 시간대로 실행 시켜야 함. (현재 오후 23:59:59.999999 ~ 오전 06:00:00.000000)
-# mMousecontroller = DetectMouseProc() # 쥐 주간
+mMousecontroller = DetectMouseProc() # 쥐 주간
 # mMousecontroller.Run()
 
-# mDetectMouse_TIC = DetectMouse_TIC()  # 쥐 야간
+mDetectMouse_TIC = DetectMouse_TIC()  # 쥐 야간
 # mDetectMouse_TIC.Run()
 
 while(True):
