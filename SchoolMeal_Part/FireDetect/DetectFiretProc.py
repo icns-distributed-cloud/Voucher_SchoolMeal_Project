@@ -25,10 +25,10 @@ class DetectFireProc:
     def Run(self): # Just Call This Function
 
         self.__mMyThread = threading.Thread(target=self.__MyThread)
-        #self.__mMyThread.daemon = True
+        #self.__mMyThread.daemon = True # Set Thread Daemon
         self.__mMyThread.start()
 
-    def __MyThread(self):
+    def __MyThread(self): # MainThread
         while True:
             self.__mLock.acquire()
 

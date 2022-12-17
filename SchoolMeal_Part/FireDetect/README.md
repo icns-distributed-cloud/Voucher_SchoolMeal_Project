@@ -1,3 +1,1 @@
-# xml_to_textYolo  
-Fire Dataset:https://github.com/OlafenwaMoses/FireNET/releases/download/v1.0/fire-dataset.zip  
-YouTube:https://youtu.be/S0GwVgwjEd0
+DetectFireProc.py - 열온도 데이터를 읽어서 주기적으로 온도를 체크하는 모듈 
