@@ -4,7 +4,7 @@ from TIC_API import * # Should Import API
 
 
 ## FilePath
-TIC_API.getInstance().SetFilePath("SchoolMeal_Part/TIC_Data/") # If You want use other FilePath, You can set W/R file path, Default path is "FLC_Data/", First argument value is Change FilePath
+TIC_API.getInstance().SetFilePath("SchoolMeal_Part/TIC/TIC_Soft/") # If You want use other FilePath, You can set W/R file path, Default path is "FLC_Data/", First argument value is Change FilePath
 
 
 ## Save Json File Data
@@ -31,5 +31,9 @@ OnePixel_40x40 = TIC_API.getInstance().GetOneCellData(0, 0, PixelType.FortyByFor
 GetDetectFireList = TIC_API.getInstance().GetAllJsonData("DetectFireList") # Get DetetctFireList Data. return 2 Dimensional Array
 
 GetFireFalgData = TIC_API.getInstance().GetFireFlagData(GetDetectFireList) # Get All Fire True or False List. return 2 Dimensional Array
+
+
+## Get ConfigData
+GetConfigData = TIC_API.getInstance().GetConfigData("config") # Get All Fire True or False List. return 2 Dimensional Array
 
 #---------------------- How to Use --------------------------#
