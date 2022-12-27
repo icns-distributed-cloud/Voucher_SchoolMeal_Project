@@ -41,7 +41,6 @@ struct t_data_t {
 	struct battery_state_t battery_state;
 	gboolean flir_run;
 	unsigned char *color_palette;
-	gboolean isBreak;
 	
 		
 	double TLC_10x10[10][10];

@@ -40,7 +40,6 @@
 #include "palettes/Iron_Black.h"
 #include "palettes/Rainbow.h"
 
-#include <setjmp.h>
 
 // UI variables
 static GtkWidget *window = NULL;
@@ -64,12 +63,6 @@ static double vis_surface_alpha=0.3;
 static double vis_surface_scaling=(1./2.25);
 static double vis_x_offset=0.;
 static double vis_y_offset=0.;
-
-
-#define TRY do{ jmp_buf ex_buf__; if( !setjmp(ex_buf__) ){
-#define CATCH } else {
-#define ETRY } }while(0)
-#define THROW longjmp(ex_buf__, 1)
 
 
 // variables to communicate with cam thread
@@ -158,16 +151,6 @@ char tdisp[16];
 
 void timer()
 {
-	
-		
-	if(tdata.flir_run == FALSE)
-		{
-			tdata.flir_run = TRUE;
-			g_thread_new ("CAM thread", cam_thread_main, &tdata);
-		}
-	
-	
-	
 	static cairo_surface_t *ps=NULL;
 	cairo_t *cr;
 	if (ps==NULL)
@@ -180,14 +163,6 @@ void timer()
 	
 	if (TRUE) {
 				//take_vis_shot=FALSE;
-				if(tdata.jpeg_buffer == NULL)
-				{
-					return;
-					}
-				if(tdata.jpeg_size == NULL)
-				{
-					return;
-				}
 				store_vis_shot(tdata.jpeg_buffer, tdata.jpeg_size);
 			}
 			if (TRUE) {
@@ -209,9 +184,6 @@ void timer()
 void
 store_vis_shot(unsigned char *jpg_buffer, unsigned int jpg_size)
 {
-
-	
-	
 time_t now;
 struct tm *loctime;
 char pname[PATH_MAX];
@@ -343,15 +315,58 @@ cairo_t *cr;
 
 		if (show_crosshair) {
 			// crosshair in the center
-			cairo_set_line_width (cr, 3);
+			/*cairo_set_line_width (cr, 3);
 			cairo_set_source_rgb (cr, 0, 0, 0);
 			cairo_move_to(cr, 320, 200);
 			cairo_line_to(cr, 320, 280);
 			cairo_stroke (cr);
 			cairo_move_to(cr, 280, 240);
 			cairo_line_to(cr, 360, 240);
-			cairo_stroke (cr);
+			cairo_stroke (cr);*/
+			
 			cairo_set_line_width (cr, 1);
+			cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
+			
+			
+			for(int i = 0; i< 10; i++)
+			{
+				cairo_move_to(cr, 0, 48 * (i + 1));
+				cairo_line_to(cr, 640,48 * (i + 1)); // w d
+				cairo_stroke (cr);
+				
+			}
+			
+			for(int i = 0; i< 10; i++)
+			{
+				cairo_move_to(cr, 64 * (i + 1), 0);
+				cairo_line_to(cr, 64 * (i + 1), 480); // w d
+				cairo_stroke (cr);
+				
+			}
+			
+			
+			for(int i=0;i<11;i++)
+			{
+				for(int j=0; j < 11; j++)
+				{
+					snprintf(tdisp, 16, "%d, %d", i, j - 1);
+					cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
+					cairo_select_font_face (cr, "Sans",
+						CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+					cairo_set_font_size (cr, 12);
+					cairo_move_to (cr, 64 * i, 48 * j);
+					cairo_show_text (cr, tdisp);
+				}
+				
+			}
+		
+			
+			/*cairo_move_to(cr, 0, 0);
+			cairo_line_to(cr, 48 * 2, 0);
+			cairo_stroke (cr);*/
+			
+			
+		/*	cairo_set_line_width (cr, 1);
 			cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
 			cairo_move_to(cr, 320, 200);
 			cairo_line_to(cr, 320, 280);
@@ -360,14 +375,15 @@ cairo_t *cr;
 			cairo_line_to(cr, 360, 240);
 			cairo_stroke (cr);
 	
+	*/
 			// print center temperature near crosshair
-			snprintf(tdisp, 16, "%.1f°C", tdata.t_center);
+			/*snprintf(tdisp, 16, "%.1f°C", tdata.t_center);
 			cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
 			cairo_select_font_face (cr, "Sans",
 				CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 			cairo_set_font_size (cr, 24);
 			cairo_move_to (cr, 330, 220);
-			cairo_show_text (cr, tdisp);
+			cairo_show_text (cr, tdisp);*/
 		}
 
 		// print battery % top right
@@ -1054,30 +1070,10 @@ main (int argc, char **argv)
 	tdata.t_center=0.0;
 	tdata.flir_run=FALSE;
 
-	/*gapp=gtk_application_new("org.gnome.flirgtk", G_APPLICATION_FLAGS_NONE);
+	gapp=gtk_application_new("org.gnome.flirgtk", G_APPLICATION_FLAGS_NONE);
 	g_signal_connect(gapp, "activate", G_CALLBACK (flirgtk_app_activate), NULL);
 	g_application_run (G_APPLICATION (gapp), argc, argv);
     g_object_unref (gapp);
-    
-    */
-    
-     tdata.color_palette = palette_Rainbow;
-      tdata.flir_run = TRUE;
-      
-		memset(&tdata.shutter_state, 0, sizeof(tdata.shutter_state));
-		memset(&tdata.battery_state, 0, sizeof(tdata.battery_state));
-		if (tdata.ir_buffer == NULL)
-			g_printerr("ir_buffer\n");
-		g_thread_new ("CAM thread", cam_thread_main, &tdata);
-		
-		
-
- 
-   timer_t timerID;
-
-    createTimer(&timerID, 0, 300);
- 
-        while (1);
     
 
 

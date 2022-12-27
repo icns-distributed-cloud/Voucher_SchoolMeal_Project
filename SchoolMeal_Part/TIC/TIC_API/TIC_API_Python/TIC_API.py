@@ -247,6 +247,26 @@ class TIC_API:
             return None
 
 
+    def GetConfigData(self, fileName:str):
+        """Get induction position in 10 x 100 cell. Second argument value is file name. Return value is 2 Dimensional Array"""
+
+        key ="InductionPosition"
+
+        datas = self.GetAllJsonData(fileName)
+
+        data_list = []
+
+        if datas == None:
+            return None
+        else:
+            if key in datas:
+
+                for i in range(len(datas[key])):
+                    data_list.append(datas[key][i])
+                return data_list
+            else:
+                return None
+
 
 
 ##### Not Use, Test Code ######
