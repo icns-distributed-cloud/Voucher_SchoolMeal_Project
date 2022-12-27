@@ -41,12 +41,18 @@ void update_fb(void);
 
 #include "cam-thread.h"
 #include "planck.h"
-
+#include <setjmp.h>
 
 // -----------------START-ORG-CODE------------------------------------------
 
 #define VENDOR_ID 0x09cb
 #define PRODUCT_ID 0x1996
+
+
+#define TRY do{ jmp_buf ex_buf__; if( !setjmp(ex_buf__) ){
+#define CATCH } else {
+#define ETRY } }while(0)
+#define THROW longjmp(ex_buf__, 1)
 
 static struct libusb_device_handle *devh = NULL;
 
@@ -524,6 +530,10 @@ int i;
 int
 EPloop(unsigned char *colormap)
 {    
+	tdata->isBreak = TRUE;
+	TRY
+	{
+		
 	
 	init();
 	
@@ -782,6 +792,8 @@ int r = 1;
 		r = libusb_bulk_transfer(devh, 0x83, buf, sizeof(buf), &actual_length, 10); 
 		if (strcmp(libusb_error_name(r), "LIBUSB_ERROR_NO_DEVICE")==0) {
 			fprintf(stderr, "EP 0x83 LIBUSB_ERROR_NO_DEVICE -> reset USB\n");
+			tdata->isBreak = FALSE;
+			
 			goto out;
 		}
 		if (actual_length > 0) {
@@ -801,8 +813,15 @@ int r = 1;
 		libusb_close(devh);
 		libusb_exit(NULL);
 	}
-
+	tdata->flir_run = FALSE;
 	return r >= 0 ? r : -r;
+	}
+	CATCH
+	{
+	}
+	ETRY;	
+		
+		
 }
 
 
