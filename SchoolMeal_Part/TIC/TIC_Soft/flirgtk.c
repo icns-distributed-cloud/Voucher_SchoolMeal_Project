@@ -999,8 +999,6 @@ int fd;
 
 
 
-
-
     fprintf(fp, "    \"TemperatureList_1600\": [\n");
 
     Length = 40;
