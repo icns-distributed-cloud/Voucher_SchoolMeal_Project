@@ -7,6 +7,7 @@ LIBS=`pkg-config --libs gtk+-3.0 libusb-1.0 libjpeg libcjson` -lm
 OBJ=flirgtk.o cam-thread.o cairo_jpg/src/cairo_jpg.o
 PRG=flirgtk -lrt
 
+
 all: $(PRG)
 
 $(PRG): $(OBJ) cam-thread.h planck.h

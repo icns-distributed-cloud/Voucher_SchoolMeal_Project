@@ -344,36 +344,43 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 		for(int j =0; j < 40; j++)
 		{		
 			
-		 short data = pix[PixelPosition_40[i][j][0][0] + PixelPosition_40[i][j][0][1] * 80] +
+		 /*short data = pix[PixelPosition_40[i][j][0][0] + PixelPosition_40[i][j][0][1] * 80] +
           pix[PixelPosition_40[i][j][1][0] + PixelPosition_40[i][j][1][1] * 80] +
           pix[PixelPosition_40[i][j][2][0] + PixelPosition_40[i][j][2][1] * 80] +
           pix[PixelPosition_40[i][j][3][0] + PixelPosition_40[i][j][3][1] * 80];
+          */
+          short data = pix[PixelPosition_40[i][j][0][0] + PixelPosition_40[i][j][0][1] * 160] +
+          pix[PixelPosition_40[i][j][1][0] + PixelPosition_40[i][j][1][1] * 160] +
+          pix[PixelPosition_40[i][j][2][0] + PixelPosition_40[i][j][2][1] * 160] +
+          pix[PixelPosition_40[i][j][3][0] + PixelPosition_40[i][j][3][1] * 160];
+
           data/=4;
           
-          tdata->TLC_40x40[i][j] = raw2temperature(data);
+          if(j==39)
+          {      
+			   tdata->TLC_40x40[i][j] = tdata->TLC_40x40[i][j-1];
+			}
+			  
+			 else
+			  {
+				         
+				    tdata->TLC_40x40[i][j] = raw2temperature(data);
+    
+		}
           
+       
 
 			}
 		}
 		
-		
-		
+//printf("%f\n",tdata->TLC_40x40[0][0]);
     
     for(int i=0; i < 10; i++)
     {
-		//int hw_1 = (frame_owidth2/(4)) * (i + 1);
-		
 		
 		for(int j =0; j < 10; j++)
 		{		
-			
-			//int hh_1 = (frame_oheight2/(3)) * (j + 1);
-			
-		 /*short data = pix[ (hh_1 - 1) * frame_owidth2 + hw_1 - 1] +
-          pix[(hh_1 - 1) * frame_owidth2 + hw_1] +
-          pix[hh_1 * frame_owidth2 + hw_1 - 1] +
-          pix[hh_1 * frame_owidth2 + hw_1];*/
-          
+		
           double arr[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
           int count = 0;
           
@@ -384,76 +391,47 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 			  {
 				  short data_ = 0;
 				  
-				  double arr__[4] = {0,0,0,0};
+				  //double arr__[4] = {0,0,0,0};
 				  
-				  int count_x = i * x;
-				  int count_y = y * j;
-				  
-				  if(i != 0 && count_x == 0 && x == 0)
-				  {
-						count_x = i * x+1;
-				  }
-				  
-				  if(x != 0 && count_x == 0 && i == 0)
-				  {
-						count_x = i + 1 * x;
-				  }
-				  
-				  
-				  if(j != 0 && count_y == 0 && y == 0)
-				  {
-						count_y = j * y+1;
-				  }
-				  
-				  if(y != 0 && count_y == 0 && j == 0)
-				  {
-						count_y = j + 1 * y;
-				  }
-				  
-				  
-				  arr__[0] = pix[PixelPosition_40[count_x][count_y][0][0] + PixelPosition_40[count_x][count_y][0][1] * 80];
+				  int count_x = (i * 4) + x;
+				  int count_y = (j * 4) + y;
+			
+			
+			
+			
+			      arr[count] = tdata->TLC_40x40[count_x][count_y];
+			      
+			      
+				  	  
+				 
+				/*  arr__[0] = pix[PixelPosition_40[count_x][count_y][0][0] + PixelPosition_40[count_x][count_y][0][1] * 80];
 				  arr__[1] = pix[PixelPosition_40[count_x][count_y][1][0] + PixelPosition_40[count_x][count_y][1][1] * 80];
 				  arr__[2] = pix[PixelPosition_40[count_x][count_y][2][0] + PixelPosition_40[count_x][count_y][2][1] * 80];
 				  arr__[3] = pix[PixelPosition_40[count_x][count_y][3][0] + PixelPosition_40[count_x][count_y][3][1] * 80];
-				  
-				/*  arr__[0] = pix[PixelPosition_40[i * x][j * y][0][0] + PixelPosition_40[i * x][j * y][0][1] * 80];
-				  arr__[1] = pix[PixelPosition_40[i * x][j * y][1][0] + PixelPosition_40[i * x][j * y][1][1] * 80];
-				  arr__[2] = pix[PixelPosition_40[i * x][j * y][2][0] + PixelPosition_40[i * x][j * y][2][1] * 80];
-				  arr__[3] = pix[PixelPosition_40[i * x][j * y][3][0] + PixelPosition_40[i * x][j * y][3][1] * 80];
-				  
-				 */
-				  
-				  double max_ = arr__[0];
+				  */
+				 
+				 /* arr__[0] = tdata->TLC_40x40[i][j];
+				  arr__[1] = Ptdata->TLC_40x40[i][j];
+				  arr__[2] = tdata->TLC_40x40[i][j];
+				  arr__[3] = tdata->TLC_40x40[i][j];
+			*/
+			
+				/*  double max_ = arr__[0];
 				  double min_ = arr__[0];
 				  for (int k=0; k< 4; k++)
 					{
 						if(arr__[k] > max_) max_ = arr__[k];
 						if(arr__[k] < min_) min_ = arr__[k];
-					}
-				 /* data_ = pix[PixelPosition_40[i * x][j * y][0][0] + PixelPosition_40[i * x][j * y][0][1] * 80] +
-				  pix[PixelPosition_40[i * x][j * y][1][0] + PixelPosition_40[i * x][j * y][1][1] * 80] +
-				  pix[PixelPosition_40[i * x][j * y][2][0] + PixelPosition_40[i * x][j * y][2][1] * 80] +
-				  pix[PixelPosition_40[i * x][j * y][3][0] + PixelPosition_40[i * x][j * y][3][1] * 80];
-				  */
+					}*/
 				  
 				  
-				  
-				// data_/=4;
-				 arr[count] = max_;
+				// arr[count] = min_;
 				 
 				 count++;
 				
 			 }
 			  
 		   }
-          
-         /* pix[PixelPosition_10[i][j][0][0] + PixelPosition_10[i][j][0][1] * 80] +
-          pix[PixelPosition_10[i][j][1][0] + PixelPosition_10[i][j][1][1] * 80] +
-          pix[PixelPosition_10[i][j][2][0] + PixelPosition_10[i][j][2][1] * 80] +
-          pix[PixelPosition_10[i][j][3][0] + PixelPosition_10[i][j][3][1] * 80];
-          
-          data/=4;
-          */
           
           
           double max = arr[0];
@@ -464,7 +442,8 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 				if(arr[k] < min) min = arr[k];
 			}
           
-          tdata->TLC_10x10[i][j] = raw2temperature(max); 
+         // tdata->TLC_10x10[i][j] = raw2temperature(min); 
+          tdata->TLC_10x10[i][j] = max; 
           //tdata->TLC_10x10[i][j] = raw2temperature(data);
           
          // printf("%f\n",tdata->TLC_10x10[i][j] );
@@ -474,12 +453,6 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 
 			}
 	}
-		
-		
-		
-		
-	
-	
 	
 	
 	

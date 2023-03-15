@@ -3,15 +3,15 @@ import time
 
 ## ------------------ How to Use -----------------#
 
-#proc = CheckCameraProc()
-#proc.Run()
+##########proc = CheckCameraProc()
+###############proc.Run()
 
 time.sleep(30)
-#subprocess.run(["sudo ./flirgtk"], shell = True)
+##############subprocess.run(["sudo ./flirgtk"], shell = True)
 
 
 while(True):
     subprocess.run(["sudo ./flirgtk"], shell = True)
-    print("aaaaaaaaa")
+    print("Start")
 ## ------------------ How to Use -----------------#
 
