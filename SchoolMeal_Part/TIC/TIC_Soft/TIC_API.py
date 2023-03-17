@@ -86,10 +86,9 @@ class TIC_API:
             for j in range(10):
                 data_list[i][j] = False
         
-        for i in range(len(data)):
-            data_list[data[i][0]][data[i][1]] = True
+        for i in range(len(data["DetectFireList"])):
+            data_list[data["DetectFireList"][i][0]][data["DetectFireList"][i][1]] = True
 
-        
         return data_list
 
     # def SaveOneJson(self, data, fileName:str):

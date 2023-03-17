@@ -1,11 +1,9 @@
-print("dsafadsfsdafdsaasdf")
-
 import RPi.GPIO as GPIO
 import time
 import threading
 import json
+import os
 #from SchoolMeal_Part.TIC_Data import *
-print("dsafadsfsdafdsaasdf")
 GPIO.setmode(GPIO.BCM)  # 상위 컨트롤러에서 호출
 
 class led_controller_v1(threading.Thread):
@@ -36,7 +34,8 @@ class led_controller_v1(threading.Thread):
 	def run(self):
 		try:
 			self.gpio_setup()
-			time.sleep(0.5)
+			time.sleep(10)
+			#time.sleep(0.5)
 
 			self.light_off(self.green_channel)
 			self.light_off(self.red_channel)
@@ -44,45 +43,45 @@ class led_controller_v1(threading.Thread):
 			self.light_off(self.buzzer_channel)
 
 			while(1):
-				time.sleep(4)
-				file = open('../SchoolMeal_Part/TIC_Data/LightType.json')
-				jsonString = json.load(file)
-				lightType = jsonString.get("lightType")
-				file.close()
-				print(lightType)
+				if (os.path.isdir("/mnt/share/") is True) and (os.path.isfile("/mnt/share/TIC_Image.jpg") is True):
+					time.sleep(5)
+					file = open('/home/icns/gitMeal/Voucher_SchoolMeal_Project/SchoolMeal_Part/TIC_Data/LightType.json')
+					jsonString = json.load(file)
+					lightType = jsonString.get("lightType")
+					file.close()
+					print(lightType)
 				#lightType만 받고 다시 파일 값은 0으로 바꿔준다.
 				#jsonString["lightType"] = 0
 				#with open('../SchoolMeal_Part/TIC_Data/LightType.json', 'w', encoding='utf-8') as f:
 				#	json.dump(jsonString, f, indent="\t")
 				#f.close()
 
-				if(lightType == 0):
-					continue
-				elif(lightType == 1):
-					self.light_on(self.red_channel)
-					time.sleep(2)
-					self.light_off(self.red_channel)
-				elif(lightType == 2):
-					self.light_on(self.red_channel)
-					self.light_on(self.blue_channel)
-					time.sleep(2)
-					self.light_off(self.red_channel)
-					self.light_off(self.blue_channel)
-				elif(lightType == 3):
-					self.light_on(self.red_channel)
-					self.light_on(self.green_channel)
-					time.sleep(2)
-					self.light_off(self.red_channel)
-					self.light_off(self.green_channel)
-				elif(lightType == 4):
-					self.light_on(self.buzzer_channel)
-					time.sleep(2)
-					self.light_off(self.buzzer_channel)
-				else:
-					GPIO.cleanup()
-					break
+					if(lightType == 0):
+						continue
+					elif(lightType == 1):
+						self.light_on(self.red_channel)
+						time.sleep(2)
+						self.light_off(self.red_channel)
+					elif(lightType == 2):
+						#self.light_on(self.red_channel)
+						self.light_on(self.blue_channel)
+						time.sleep(2)
+						#self.light_off(self.red_channel)
+						self.light_off(self.blue_channel)
+					elif(lightType == 3):
+						#self.light_on(self.red_channel)
+						self.light_on(self.green_channel)
+						time.sleep(2)
+						#self.light_off(self.red_channel)
+						self.light_off(self.green_channel)
+					elif(lightType == 4):
+						self.light_on(self.buzzer_channel)
+						time.sleep(2)
+						self.light_off(self.buzzer_channel)
+					else:
+						GPIO.cleanup()
+						break
 
-					
 		except KeyboardInterrupt:
 			GPIO.cleanup()
 			pass

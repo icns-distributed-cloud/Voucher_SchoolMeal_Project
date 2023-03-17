@@ -3,6 +3,21 @@
 Common modules
 """
 
+
+########
+
+import sys
+from os import path
+import os
+
+#sys.path.append(path.abspath('/home/icns/.local/lib/python3.9/site-packages'))
+#sys.path.append(path.abspath('/usr/local/lib/python3.9/dist-packages'))
+#os.system("pip uninstall -y numpy")
+#os.system('rm -rf /home/icns/.local/lib/python3.9/site-packages/numpy/')
+#os.system("pip install numpy==1.20.3")
+
+########
+
 import json
 import math
 import platform
