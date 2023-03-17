@@ -41,12 +41,18 @@ void update_fb(void);
 
 #include "cam-thread.h"
 #include "planck.h"
-
+#include <setjmp.h>
 
 // -----------------START-ORG-CODE------------------------------------------
 
 #define VENDOR_ID 0x09cb
 #define PRODUCT_ID 0x1996
+
+
+#define TRY do{ jmp_buf ex_buf__; if( !setjmp(ex_buf__) ){
+#define CATCH } else {
+#define ETRY } }while(0)
+#define THROW longjmp(ex_buf__, 1)
 
 static struct libusb_device_handle *devh = NULL;
 
@@ -328,38 +334,8 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 	////
 	
 	int num =0;
-    
-    for(int i=0; i < 10; i++)
-    {
-		//int hw_1 = (frame_owidth2/(4)) * (i + 1);
-		
-		
-		for(int j =0; j < 10; j++)
-		{		
-			
-			//int hh_1 = (frame_oheight2/(3)) * (j + 1);
-			
-		 short data = /*pix[ (hh_1 - 1) * frame_owidth2 + hw_1 - 1] +
-          pix[(hh_1 - 1) * frame_owidth2 + hw_1] +
-          pix[hh_1 * frame_owidth2 + hw_1 - 1] +
-          pix[hh_1 * frame_owidth2 + hw_1];*/
-          pix[PixelPosition_10[i][j][0][0] + PixelPosition_10[i][j][0][1] * 80] +
-          pix[PixelPosition_10[i][j][1][0] + PixelPosition_10[i][j][1][1] * 80] +
-          pix[PixelPosition_10[i][j][2][0] + PixelPosition_10[i][j][2][1] * 80] +
-          pix[PixelPosition_10[i][j][3][0] + PixelPosition_10[i][j][3][1] * 80];
-          
-          data/=4;
-          
-          tdata->TLC_10x10[i][j] = raw2temperature(data);
-          
-         // printf("%f\n",tdata->TLC_10x10[i][j] );
-          
-          //printf("%f / ", raw2temperature(List[num]));
-          num++;
-
-			}
-		}
-		
+	
+	
 		
 		 for(int i=0; i < 40; i++)
 		{
@@ -368,19 +344,115 @@ void vframe(char ep[],char EP_error[], int r, int actual_length, unsigned char b
 		for(int j =0; j < 40; j++)
 		{		
 			
-		 short data = pix[PixelPosition_40[i][j][0][0] + PixelPosition_40[i][j][0][1] * 80] +
+		 /*short data = pix[PixelPosition_40[i][j][0][0] + PixelPosition_40[i][j][0][1] * 80] +
           pix[PixelPosition_40[i][j][1][0] + PixelPosition_40[i][j][1][1] * 80] +
           pix[PixelPosition_40[i][j][2][0] + PixelPosition_40[i][j][2][1] * 80] +
           pix[PixelPosition_40[i][j][3][0] + PixelPosition_40[i][j][3][1] * 80];
+          */
+          short data = pix[PixelPosition_40[i][j][0][0] + PixelPosition_40[i][j][0][1] * 160] +
+          pix[PixelPosition_40[i][j][1][0] + PixelPosition_40[i][j][1][1] * 160] +
+          pix[PixelPosition_40[i][j][2][0] + PixelPosition_40[i][j][2][1] * 160] +
+          pix[PixelPosition_40[i][j][3][0] + PixelPosition_40[i][j][3][1] * 160];
+
           data/=4;
           
-          tdata->TLC_40x40[i][j] = raw2temperature(data);
+          if(j==39)
+          {      
+			   tdata->TLC_40x40[i][j] = tdata->TLC_40x40[i][j-1];
+			}
+			  
+			 else
+			  {
+				         
+				    tdata->TLC_40x40[i][j] = raw2temperature(data);
+    
+		}
           
+       
 
 			}
 		}
-	
-	
+		
+//printf("%f\n",tdata->TLC_40x40[0][0]);
+    
+    for(int i=0; i < 10; i++)
+    {
+		
+		for(int j =0; j < 10; j++)
+		{		
+		
+          double arr[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+          int count = 0;
+          
+          for(int x =0; x<4; x++)
+          {
+			  
+			  for(int y =0; y<4; y++)
+			  {
+				  short data_ = 0;
+				  
+				  //double arr__[4] = {0,0,0,0};
+				  
+				  int count_x = (i * 4) + x;
+				  int count_y = (j * 4) + y;
+			
+			
+			
+			
+			      arr[count] = tdata->TLC_40x40[count_x][count_y];
+			      
+			      
+				  	  
+				 
+				/*  arr__[0] = pix[PixelPosition_40[count_x][count_y][0][0] + PixelPosition_40[count_x][count_y][0][1] * 80];
+				  arr__[1] = pix[PixelPosition_40[count_x][count_y][1][0] + PixelPosition_40[count_x][count_y][1][1] * 80];
+				  arr__[2] = pix[PixelPosition_40[count_x][count_y][2][0] + PixelPosition_40[count_x][count_y][2][1] * 80];
+				  arr__[3] = pix[PixelPosition_40[count_x][count_y][3][0] + PixelPosition_40[count_x][count_y][3][1] * 80];
+				  */
+				 
+				 /* arr__[0] = tdata->TLC_40x40[i][j];
+				  arr__[1] = Ptdata->TLC_40x40[i][j];
+				  arr__[2] = tdata->TLC_40x40[i][j];
+				  arr__[3] = tdata->TLC_40x40[i][j];
+			*/
+			
+				/*  double max_ = arr__[0];
+				  double min_ = arr__[0];
+				  for (int k=0; k< 4; k++)
+					{
+						if(arr__[k] > max_) max_ = arr__[k];
+						if(arr__[k] < min_) min_ = arr__[k];
+					}*/
+				  
+				  
+				// arr[count] = min_;
+				 
+				 count++;
+				
+			 }
+			  
+		   }
+          
+          
+          double max = arr[0];
+          double min = arr[0];
+          for (int k=0; k< 16; k++)
+			{
+				if(arr[k] > max) max = arr[k];
+				if(arr[k] < min) min = arr[k];
+			}
+          
+         // tdata->TLC_10x10[i][j] = raw2temperature(min); 
+          tdata->TLC_10x10[i][j] = max; 
+          //tdata->TLC_10x10[i][j] = raw2temperature(data);
+          
+         // printf("%f\n",tdata->TLC_10x10[i][j] );
+          
+          //printf("%f / ", raw2temperature(List[num]));
+          num++;
+
+			}
+	}
 	
 	
 	
@@ -524,6 +596,10 @@ int i;
 int
 EPloop(unsigned char *colormap)
 {    
+	tdata->isBreak = TRUE;
+	TRY
+	{
+		
 	
 	init();
 	
@@ -782,6 +858,8 @@ int r = 1;
 		r = libusb_bulk_transfer(devh, 0x83, buf, sizeof(buf), &actual_length, 10); 
 		if (strcmp(libusb_error_name(r), "LIBUSB_ERROR_NO_DEVICE")==0) {
 			fprintf(stderr, "EP 0x83 LIBUSB_ERROR_NO_DEVICE -> reset USB\n");
+			tdata->isBreak = FALSE;
+			
 			goto out;
 		}
 		if (actual_length > 0) {
@@ -801,8 +879,15 @@ int r = 1;
 		libusb_close(devh);
 		libusb_exit(NULL);
 	}
-
+	tdata->flir_run = FALSE;
 	return r >= 0 ? r : -r;
+	}
+	CATCH
+	{
+	}
+	ETRY;	
+		
+		
 }
 
 
