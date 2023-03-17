@@ -24,6 +24,8 @@ class TIC_API:
 
     __mIsInit = False
 
+    __mBeforeJsonData = None
+
     def __init__(self): # Initialization
         if self.__mIsInit == True:
             return
@@ -119,10 +121,15 @@ class TIC_API:
         if os.path.isfile(self.__mFilePath + fileName + ".json") == False:
             return None
 
-        with open(self.__mFilePath + fileName + ".json", "r") as json_file:
-            json_data = json.load(json_file)
-            if(json_data != None):
-                return json_data
+        try:
+            with open(self.__mFilePath + fileName + ".json", "r") as json_file:
+                json_data = json.load(json_file)
+                if(json_data != None):
+                    self.__mBeforeJsonData = json_data
+                    return json_data
+        except:
+            return self.__mBeforeJsonData
+
 
     def GetDetectFireList(self, fileName:str):
         """Get Detect Fire Cell in 10x10 List. Return value is 2 Dimensional Array"""
