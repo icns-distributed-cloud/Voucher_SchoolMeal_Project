@@ -39,7 +39,9 @@ apt install libgtk-3-dev libjpeg-dev libusb-1.0-0-dev libcjson-dev
 
 cp 77-flirone-lusb.rules /lib/udev/rules.d/
 
-
 udevadm control --reload-rules
 
 ./flirgtk
+
+## 초기 화면 설정 방법
+프로그램 실행 후, 카메라의 물리적 각도 및 위치를 화구에 맞춰 셋팅
