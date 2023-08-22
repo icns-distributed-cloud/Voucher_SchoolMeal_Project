@@ -9,6 +9,9 @@
 MySQL 이미지로 도커 컨테이너를 생성해 3306포트를 통해 MySQL을 실행한다.
 
 ## 3. Controller.py 수정
+Controller.py는 기본적으로 MySQL에 데이터를 쓰고 불러온다.
+
+그렇기 때문에 Controller.py에서 MySQL과 연동한 `con`(config) 정보를 수정한다.
 ```
 # Controller.py의 config 정보를 수정해주어야 한다.
 
