@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang=""ko>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="refresh" content="3">
+        
+        <title>Dashboard</title>
+
+        <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/w3.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/my.css') }}">
+        
+    </head>
+    <body>
+        <div class="container">
+            <div class="wrapper">
+                <div class="flex-wrapper">
+                    <div class="rectangle-color box-size">
+                        <p class="text-title">Gas</p>
+                        {% if Gas|int < 400 %}
+                            <p class="text-value text-green">{{ Gas }} ppm</p>
+                        {% elif Gas|int > 600 %}
+                            <p class="text-value text-red">{{ Gas }} ppm</p>
+                        {% else %}
+                            <p class="text-value text-yellow">{{ Gas }} ppm</p>
+                        {% endif %}
+                    </div>
+                    <div class="rectangle-color box-size">
+                        <p class="text-title">Light</p>
+                        {% if Light|int > 130  %}
+                            <p class="text-value text-green">{{ Light }} lux</p>
+                        {% elif Light|int < 50 %}
+                            <p class="text-value text-red">{{ Light }} lux</p>
+                        {% else %}
+                            <p class="text-value text-yellow">{{ Light }} lux</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="flex-wrapper">
+                    <div class="rectangle-color box-size">
+                        <p class="text-title">Humid</p>
+                        {% if Humid|int > 50  %}
+                            <p class="text-value text-green">{{ Humid }} %</p>
+                        {% elif Humid|int < 20 %}
+                            <p class="text-value text-red">{{ Humid }} %</p>
+                        {% else %}
+                            <p class="text-value text-yellow">{{ Humid }} %</p>
+                        {% endif %}
+                    </div>
+                    <div class="rectangle-color box-size">
+                        <p class="text-title">Temp</p>
+                        {% if Temp|int > 30 %}
+                            <p class="text-value text-red">{{ Temp }} ℃</p>
+                        {% elif Temp|int < 14  %}
+                            <p class="text-value text-red">{{ Temp }} ℃</p>
+                        {% elif Temp|int < 18  %}
+                            <p class="text-value text-yellow">{{ Temp }} ℃</p>
+                        {% elif Temp|int > 26  %}
+                            <p class="text-value text-yellow">{{ Temp }} ℃</p>
+                        {% else %}
+                            <p class="text-value text-green">{{ Temp }} ℃</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

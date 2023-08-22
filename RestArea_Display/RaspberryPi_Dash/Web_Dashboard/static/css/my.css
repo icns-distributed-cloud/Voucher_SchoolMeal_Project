@@ -1,0 +1,63 @@
+body {
+    background-color: #111217;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+}
+
+.wrapper {
+    position: relative;
+    margin: 0 auto;
+    aspect-ratio: 16 / 9;
+
+    line-height: 200px;
+
+    justify-content: center;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.flex-wrapper {
+    display: flex
+}
+
+.rectangle-color {
+    background: #808080;
+}
+
+.box-size {
+    width: 98%;
+    height: 500px;
+    margin: 1%;
+}
+
+.text-title {
+    font-size: 920%;
+    font-weight: 700;
+    font-family:'Courier New', Courier, monospace;
+    margin: 0;
+
+    color: white;
+    text-shadow: 0.5% 0.5% #111217;
+}
+
+.text-value {
+    font-size: 1000%;
+    font-weight: 500;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    margin: 0;
+}
+
+.text-green {
+    color: green;
+}
+
+.text-yellow {
+    color: yellow;
+}
+
+.text-red {
+    color: red;
+}
