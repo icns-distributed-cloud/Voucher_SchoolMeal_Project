@@ -39,7 +39,13 @@ apt install libgtk-3-dev libjpeg-dev libusb-1.0-0-dev libcjson-dev
 
 cp 77-flirone-lusb.rules /lib/udev/rules.d/
 
-
 udevadm control --reload-rules
 
 ./flirgtk
+
+## Auto Starting
+AutoStart.py 파일을 라즈베리 파이 시스템에 서비스 등록
+
+부팅전 항상 열화상 카메라를 라즈베리 파이에 설치해야함.
+
+이후 부팅 시 열화상 카메라 자동 실행됨
