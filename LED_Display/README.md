@@ -26,7 +26,8 @@ sudo python3 displaydata.py --led-cols=64 --led-no-hardware=LED_NO_HARDWARE_PULS
 
 ### Related with
 ```
-덕인이 열화상 repo
+Voucher_SchoolMeal_Project/SchoolMeal_Part/FireDetect/DetectFiretProc.py
+위 코드에서 작성하는 TIC_Data.json 파일을 SMB연결을 통해 읽어옴
 ```
 
 ### Notice
