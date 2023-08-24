@@ -117,7 +117,7 @@ def controller():
             detected_oil_temperature = GetTemperatureList[x][y]
         
 
-    required_oil_temperature = 50.0 #50.0
+    required_oil_temperature = 5.0 #50.0
     #detected_oil_temperature = 100 # for test, should remove
     
 
