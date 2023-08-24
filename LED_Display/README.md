@@ -17,9 +17,9 @@ pip install -r requirements.txt
 
 ```
 cd bindings/python/samples
-# displaydata.py의 line 38의 경로 변경 필요! (ex: font.LoadFont("../../../fonts/7x13.bdf"))
+# displaydata.py의 line 38의 경로 변경 필요! 
+# 'Voucher_SchoolMeal_Project/LED_Display/fonts/7x13.bdf' 파일을 읽어와야 함 (ex: font.LoadFont("../../../fonts/7x13.bdf"))
 sudo python3 displaydata.py --led-cols=64 --led-no-hardware=LED_NO_HARDWARE_PULSE --led-slowdown-gpio=4
-
 ```
 
 ### Result
