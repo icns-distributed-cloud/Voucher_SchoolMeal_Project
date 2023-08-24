@@ -3,7 +3,8 @@
 ### Clone
 
 ```
-git clone https://github.com/icns-distributed-cloud/LED_Display.git
+git clone https://github.com/icns-distributed-cloud/Voucher_SchoolMeal_Project.git
+cd Voucher_SchoolMeal_Project/LED_Display
 ```
 
 ### Package Install
@@ -16,7 +17,7 @@ pip install -r requirements.txt
 
 ```
 cd bindings/python/samples
-
+# displaydata.py의 line 38의 경로 변경 필요! (ex: font.LoadFont("../../../fonts/7x13.bdf"))
 sudo python3 displaydata.py --led-cols=64 --led-no-hardware=LED_NO_HARDWARE_PULSE --led-slowdown-gpio=4
 
 ```
@@ -26,8 +27,11 @@ sudo python3 displaydata.py --led-cols=64 --led-no-hardware=LED_NO_HARDWARE_PULS
 
 ### Related with
 ```
+# 아래 코드에서 SMB연결을 통해 TIC_Data.json 파일을 업데이트함
 Voucher_SchoolMeal_Project/SchoolMeal_Part/FireDetect/DetectFiretProc.py
-위 코드에서 작성하는 TIC_Data.json 파일을 SMB연결을 통해 읽어옴
+
+# 아래 코드에서 위 DetectFireProc.py에서 작성된 TIC_Data.json 파일을 읽어옴
+Voucher_SchoolMeal_Project/LED_Display/bindings/python/samples/TIC_API.py
 ```
 
 ### Notice
